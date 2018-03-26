@@ -1,4 +1,4 @@
-package com.djordjem.serialmonitor;
+package com.djordjem.serialmonitor.gui;
 
 import com.fazecast.jSerialComm.SerialPort;
 

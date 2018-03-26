@@ -3,16 +3,16 @@
 ## Releases
 ## v1.0 - in development
 * simple textual console monitoring
-* remember interface state and settings in user folder (TODO)
+* remember interface state and settings in user folder
+* all possible baudrates
 * autoscroll (TODO)
-* all possible baudrates (TODO)
+* data sending and new line char (TODO)
 
 ## Planned features (TODO)
 * sending history
 * command shortcuts
 * organize code better
 * display connection status
-* data sending and new line char
 * data sending on enter or as typed
 * flush window content to file
 * apend to file
