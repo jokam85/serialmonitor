@@ -46,7 +46,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="cf139" class="javax.swing.JTextArea" binding="serialText" custom-create="true">
+          <component id="cf139" class="javax.swing.JTextArea" binding="serialText">
             <constraints/>
             <properties>
               <editable value="false"/>

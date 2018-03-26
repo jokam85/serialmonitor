@@ -17,8 +17,6 @@ import static com.djordjem.serialmonitor.settings.SettingsService.SETTINGS;
 
 public class SerialMonitor extends JDialog {
 
-  private final Object interfaceLock = new Object();
-
   private List<SerialPort> ports = new ArrayList<>();
   private SerialPort openedPort = null;
 
@@ -37,19 +35,17 @@ public class SerialMonitor extends JDialog {
   private Thread interfaceUpdateThread = new Thread(new Runnable() {
     public void run() {
       while (!Thread.interrupted()) {
-        synchronized (interfaceLock) {
-          initPorts(false);
-          if (openedPort != null) {
-            openPortBtn.setEnabled(!openedPort.isOpen());
-            closeButton.setEnabled(openedPort.isOpen());
-            baudRateCmb.setEnabled(!openedPort.isOpen());
-            serialPortsCmb.setEnabled(!openedPort.isOpen());
-          } else {
-            openPortBtn.setEnabled(true);
-            closeButton.setEnabled(false);
-            baudRateCmb.setEnabled(true);
-            serialPortsCmb.setEnabled(true);
-          }
+        initPorts(false);
+        if (openedPort != null) {
+          openPortBtn.setEnabled(!openedPort.isOpen());
+          closeButton.setEnabled(openedPort.isOpen());
+          baudRateCmb.setEnabled(!openedPort.isOpen());
+          serialPortsCmb.setEnabled(!openedPort.isOpen());
+        } else {
+          openPortBtn.setEnabled(true);
+          closeButton.setEnabled(false);
+          baudRateCmb.setEnabled(true);
+          serialPortsCmb.setEnabled(true);
         }
         try {
           Thread.sleep(200);
@@ -63,6 +59,7 @@ public class SerialMonitor extends JDialog {
     public int getListeningEvents() {
       return SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
     }
+
     public void serialEvent(SerialPortEvent event) {
       if (event.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE)
         return;
@@ -87,6 +84,7 @@ public class SerialMonitor extends JDialog {
     initPorts(true);
     initRates();
     initListeners();
+    checkBoxAutoscroll.setSelected(settings.getAutoscroll());
 
     interfaceUpdateThread.setPriority(Thread.NORM_PRIORITY - 1);
     interfaceUpdateThread.start();
@@ -101,6 +99,7 @@ public class SerialMonitor extends JDialog {
     settings.setWidth(getWidth());
     settings.setHeight(getHeight());
     settings.setBaudRate((Integer) baudRateCmb.getSelectedItem());
+    settings.setAutoscroll(checkBoxAutoscroll.isSelected());
     final SerialPortCmbItem selectedPort = (SerialPortCmbItem) serialPortsCmb.getSelectedItem();
     if (selectedPort != null) {
       settings.setPortName(selectedPort.getSerialPort().getSystemPortName());
@@ -110,7 +109,8 @@ public class SerialMonitor extends JDialog {
 
   private void initPorts(boolean shouldSetDefaultValue) {
     if (needsReloadingPortList()) {
-      this.ports = Arrays.asList(SerialPort.getCommPorts());;
+      this.ports = Arrays.asList(SerialPort.getCommPorts());
+      ;
       SerialPortCmbItem previoslySelectedPort = (SerialPortCmbItem) serialPortsCmb.getSelectedItem();
       serialPortsCmb.removeAllItems();
       for (SerialPort sp : ports) {
@@ -149,31 +149,23 @@ public class SerialMonitor extends JDialog {
   }
 
   private void openPort() {
-    synchronized (interfaceLock) {
-      closePort();
-      int index = serialPortsCmb.getSelectedIndex();
-      openedPort = ports.get(index);
-      Integer baudRate = (Integer) baudRateCmb.getSelectedItem();
-      int baud = baudRate == null ? 9600 : baudRate;
-      openedPort.setBaudRate(baud);
-      openedPort.openPort();
-      openedPort.addDataListener(dataListener);
-    }
+    closePort();
+    int index = serialPortsCmb.getSelectedIndex();
+    openedPort = ports.get(index);
+    Integer baudRate = (Integer) baudRateCmb.getSelectedItem();
+    int baud = baudRate == null ? 9600 : baudRate;
+    openedPort.setBaudRate(baud);
+    openedPort.openPort();
+    openedPort.addDataListener(dataListener);
+
   }
 
   private void closePort() {
-    synchronized (interfaceLock) {
-      if (openedPort != null && openedPort.isOpen()) {
-        openedPort.removeDataListener();
-        openedPort.closePort();
-        openedPort = null;
-      }
+    if (openedPort != null && openedPort.isOpen()) {
+      openedPort.removeDataListener();
+      openedPort.closePort();
+      openedPort = null;
     }
-  }
-
-  private void createUIComponents() {
-    this.serialText = new JTextArea();
-
   }
 
   private void initListeners() {

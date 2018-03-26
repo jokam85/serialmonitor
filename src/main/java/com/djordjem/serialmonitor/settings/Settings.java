@@ -8,6 +8,7 @@ public class Settings {
   private Integer posY = 100;
   private Integer baudRate = 9600;
   private String portName;
+  private Boolean autoscroll = false;
 
   public Integer getWidth() {
     return width;
@@ -55,5 +56,13 @@ public class Settings {
 
   public void setPortName(String portName) {
     this.portName = portName;
+  }
+
+  public Boolean getAutoscroll() {
+    return autoscroll;
+  }
+
+  public void setAutoscroll(Boolean autoscroll) {
+    this.autoscroll = autoscroll;
   }
 }
