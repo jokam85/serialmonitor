@@ -1,7 +1,7 @@
 # Serial monitor
 
 ## Releases
-## v1.0 - in development
+## v1.0
 * simple textual console monitoring
 * remember interface state and settings in user folder
 * all possible baudrates
