@@ -10,9 +10,9 @@
 ## v1.1 (TODO)
 * data sending
 * new line separator
+* data sending on enter or as typed
 * sending history (TODO)
 * command shortcuts (TODO)
-* data sending on enter or as typed (TODO)
 * BUGFIX using swing timer instead of thread for GUI update
 
 ## Planned features (TODO)

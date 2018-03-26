@@ -36,6 +36,8 @@ public class SerialMonitor extends JDialog {
   private JTextField textFieldLineToSend;
   private JButton buttonSend;
   private JComboBox comboBoxLineEnding;
+  private JCheckBox checkBoxSendAsType;
+  private JPanel jPanelFooter;
   private Settings settings;
 
   private Timer guiUpdateTimer = new Timer(300, (event) -> {
@@ -45,7 +47,7 @@ public class SerialMonitor extends JDialog {
     openPortBtn.setVisible(openedPort == null || !openedPort.isOpen());
     closeButton.setVisible(openedPort != null && openedPort.isOpen());
     textFieldLineToSend.setEnabled(openedPort != null && openedPort.isOpen());
-    buttonSend.setEnabled(openedPort != null && openedPort.isOpen());
+    buttonSend.setEnabled(openedPort != null && openedPort.isOpen() && !checkBoxSendAsType.isSelected());
   });
 
   private SerialPortDataListener dataListener = new SerialPortDataListener() {
@@ -84,16 +86,9 @@ public class SerialMonitor extends JDialog {
     initRates();
     initListeners();
     checkBoxAutoscroll.setSelected(settings.getAutoscroll());
+    checkBoxSendAsType.setSelected(settings.getSendAsYouType());
     comboBoxLineEnding.setSelectedItem(settings.getLineEnding());
     guiUpdateTimer.start();
-    textFieldLineToSend.addKeyListener(new KeyAdapter() {
-      @Override
-      public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-          buttonSend.doClick();
-        }
-      }
-    });
   }
 
   private void openPort() {
@@ -124,6 +119,7 @@ public class SerialMonitor extends JDialog {
     settings.setHeight(getHeight());
     settings.setBaudRate((Integer) baudRateCmb.getSelectedItem());
     settings.setAutoscroll(checkBoxAutoscroll.isSelected());
+    settings.setSendAsYouType(checkBoxSendAsType.isSelected());
     settings.setLineEnding(comboBoxLineEnding.getSelectedItem().toString());
     final SerialPortCmbItem selectedPort = (SerialPortCmbItem) serialPortsCmb.getSelectedItem();
     if (selectedPort != null) {
@@ -176,16 +172,20 @@ public class SerialMonitor extends JDialog {
     openPortBtn.addActionListener(e -> openPort());
     closeButton.addActionListener(e -> closePort());
     clearButton.addActionListener(e -> serialText.setText(""));
-    buttonSend.addActionListener(e -> {
-      try {
-        openedPort.getOutputStream().write(textFieldLineToSend.getText().concat(getNewLine()).getBytes());
-        textFieldLineToSend.setText("");
-      } catch (IOException e1) {
-        closePort();
-        e1.printStackTrace();
+    buttonSend.addActionListener(e -> sendEnteredText());
+    textFieldLineToSend.addKeyListener(new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent e) {
+        if (checkBoxSendAsType.isSelected()) {
+          sendChar(e.getKeyChar());
+          clearSendField();
+        } else {
+          if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            buttonSend.doClick();
+          }
+        }
       }
     });
-
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
         onApplicationExit();
@@ -210,4 +210,26 @@ public class SerialMonitor extends JDialog {
     return "";
   }
 
+  private void sendEnteredText() {
+    try {
+      openedPort.getOutputStream().write(textFieldLineToSend.getText().concat(getNewLine()).getBytes());
+      clearSendField();
+    } catch (IOException e1) {
+      closePort();
+      e1.printStackTrace();
+    }
+  }
+
+  private void sendChar(char c) {
+    try {
+      openedPort.getOutputStream().write(c);
+    } catch (IOException e1) {
+      closePort();
+      e1.printStackTrace();
+    }
+  }
+
+  private void clearSendField() {
+    textFieldLineToSend.setText("");
+  }
 }

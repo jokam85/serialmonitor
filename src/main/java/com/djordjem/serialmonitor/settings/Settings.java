@@ -9,6 +9,7 @@ public class Settings {
   private Integer baudRate = 9600;
   private String portName;
   private Boolean autoscroll = false;
+  private Boolean sendAsYouType = false;
   private String lineEnding = "NL";
 
   public Integer getWidth() {
@@ -73,5 +74,13 @@ public class Settings {
 
   public void setLineEnding(String lineEnding) {
     this.lineEnding = lineEnding;
+  }
+
+  public Boolean getSendAsYouType() {
+    return sendAsYouType;
+  }
+
+  public void setSendAsYouType(Boolean sendAsYouType) {
+    this.sendAsYouType = sendAsYouType;
   }
 }
