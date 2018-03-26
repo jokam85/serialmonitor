@@ -6,7 +6,6 @@ import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 
 import javax.swing.*;
-import javax.swing.text.DefaultCaret;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -32,6 +31,7 @@ public class SerialMonitor extends JDialog {
   private JButton closeButton;
   private JButton clearButton;
   private JTextArea serialText;
+  private JCheckBox checkBoxAutoscroll;
   private Settings settings;
 
   private Thread interfaceUpdateThread = new Thread(new Runnable() {
@@ -71,6 +71,9 @@ public class SerialMonitor extends JDialog {
       if (numRead > 0) {
         String data = new String(newData);
         serialText.append(data);
+        if (checkBoxAutoscroll.isSelected()) {
+          serialText.setCaretPosition(serialText.getDocument().getLength());
+        }
       }
     }
   };
@@ -170,8 +173,7 @@ public class SerialMonitor extends JDialog {
 
   private void createUIComponents() {
     this.serialText = new JTextArea();
-    DefaultCaret caret = (DefaultCaret) serialText.getCaret();
-    caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+
   }
 
   private void initListeners() {

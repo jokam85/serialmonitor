@@ -5,10 +5,10 @@
 * simple textual console monitoring
 * remember interface state and settings in user folder
 * all possible baudrates
-* autoscroll (TODO)
-* data sending and new line char (TODO)
+* autoscroll
 
 ## Planned features (TODO)
+* data sending and new line char
 * sending history
 * command shortcuts
 * organize code better
