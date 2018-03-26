@@ -6,8 +6,11 @@ import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 
 import javax.swing.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -81,6 +84,14 @@ public class SerialMonitor extends JDialog {
     initListeners();
     checkBoxAutoscroll.setSelected(settings.getAutoscroll());
     guiUpdateTimer.start();
+    textFieldLineToSend.addKeyListener(new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+          buttonSend.doClick();
+        }
+      }
+    });
   }
 
   private void openPort() {
@@ -162,6 +173,16 @@ public class SerialMonitor extends JDialog {
     openPortBtn.addActionListener(e -> openPort());
     closeButton.addActionListener(e -> closePort());
     clearButton.addActionListener(e -> serialText.setText(""));
+    buttonSend.addActionListener(e -> {
+      try {
+        openedPort.getOutputStream().write(textFieldLineToSend.getText().concat("\n").getBytes());
+        textFieldLineToSend.setText("");
+      } catch (IOException e1) {
+        closePort();
+        e1.printStackTrace();
+      }
+    });
+
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
         onApplicationExit();

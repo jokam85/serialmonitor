@@ -8,10 +8,12 @@
 * autoscroll
 
 ## v1.1 (TODO)
-* data sending and new line char (TODO)
+* data sending
+* new line separator (TODO)
 * sending history (TODO)
 * command shortcuts (TODO)
-* data sending on enter or as typed
+* data sending on enter or as typed (TODO)
+* BUGFIX using swing timer instead of thread for GUI update
 
 ## Planned features (TODO)
 * organize code better
