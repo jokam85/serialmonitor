@@ -30,29 +30,18 @@ public class SerialMonitor extends JDialog {
   private JButton clearButton;
   private JTextArea serialText;
   private JCheckBox checkBoxAutoscroll;
+  private JTextField textFieldLineToSend;
+  private JButton buttonSend;
   private Settings settings;
 
-  private Thread interfaceUpdateThread = new Thread(new Runnable() {
-    public void run() {
-      while (!Thread.interrupted()) {
-        initPorts(false);
-        if (openedPort != null) {
-          openPortBtn.setEnabled(!openedPort.isOpen());
-          closeButton.setEnabled(openedPort.isOpen());
-          baudRateCmb.setEnabled(!openedPort.isOpen());
-          serialPortsCmb.setEnabled(!openedPort.isOpen());
-        } else {
-          openPortBtn.setEnabled(true);
-          closeButton.setEnabled(false);
-          baudRateCmb.setEnabled(true);
-          serialPortsCmb.setEnabled(true);
-        }
-        try {
-          Thread.sleep(200);
-        } catch (InterruptedException e) {
-        }
-      }
-    }
+  private Timer guiUpdateTimer = new Timer(300, (event) -> {
+    initPorts(false);
+    serialPortsCmb.setEnabled(openedPort == null || !openedPort.isOpen());
+    baudRateCmb.setEnabled(openedPort == null || !openedPort.isOpen());
+    openPortBtn.setVisible(openedPort == null || !openedPort.isOpen());
+    closeButton.setVisible(openedPort != null && openedPort.isOpen());
+    textFieldLineToSend.setEnabled(openedPort != null && openedPort.isOpen());
+    buttonSend.setEnabled(openedPort != null && openedPort.isOpen());
   });
 
   private SerialPortDataListener dataListener = new SerialPortDataListener() {
@@ -61,16 +50,22 @@ public class SerialMonitor extends JDialog {
     }
 
     public void serialEvent(SerialPortEvent event) {
-      if (event.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE)
+      if (event.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
         return;
-      byte[] newData = new byte[openedPort.bytesAvailable()];
-      int numRead = openedPort.readBytes(newData, newData.length);
-      if (numRead > 0) {
-        String data = new String(newData);
-        serialText.append(data);
-        if (checkBoxAutoscroll.isSelected()) {
-          serialText.setCaretPosition(serialText.getDocument().getLength());
+      }
+      try {
+        byte[] newData = new byte[openedPort.bytesAvailable()];
+        int numRead = openedPort.readBytes(newData, newData.length);
+        if (numRead > 0) {
+          String data = new String(newData);
+          serialText.append(data);
+          if (checkBoxAutoscroll.isSelected()) {
+            serialText.setCaretPosition(serialText.getDocument().getLength());
+          }
         }
+      } catch (Exception e) {
+        closePort();
+        e.printStackTrace();
       }
     }
   };
@@ -85,9 +80,7 @@ public class SerialMonitor extends JDialog {
     initRates();
     initListeners();
     checkBoxAutoscroll.setSelected(settings.getAutoscroll());
-
-    interfaceUpdateThread.setPriority(Thread.NORM_PRIORITY - 1);
-    interfaceUpdateThread.start();
+    guiUpdateTimer.start();
   }
 
   private void openPort() {
@@ -110,7 +103,7 @@ public class SerialMonitor extends JDialog {
   }
 
   private void onApplicationExit() {
-    interfaceUpdateThread.interrupt();
+    guiUpdateTimer.stop();
     dispose();
     settings.setPosX(getX());
     settings.setPosY(getY());
