@@ -35,6 +35,7 @@ public class SerialMonitor extends JDialog {
   private JCheckBox checkBoxAutoscroll;
   private JTextField textFieldLineToSend;
   private JButton buttonSend;
+  private JComboBox comboBoxLineEnding;
   private Settings settings;
 
   private Timer guiUpdateTimer = new Timer(300, (event) -> {
@@ -83,6 +84,7 @@ public class SerialMonitor extends JDialog {
     initRates();
     initListeners();
     checkBoxAutoscroll.setSelected(settings.getAutoscroll());
+    comboBoxLineEnding.setSelectedItem(settings.getLineEnding());
     guiUpdateTimer.start();
     textFieldLineToSend.addKeyListener(new KeyAdapter() {
       @Override
@@ -122,6 +124,7 @@ public class SerialMonitor extends JDialog {
     settings.setHeight(getHeight());
     settings.setBaudRate((Integer) baudRateCmb.getSelectedItem());
     settings.setAutoscroll(checkBoxAutoscroll.isSelected());
+    settings.setLineEnding(comboBoxLineEnding.getSelectedItem().toString());
     final SerialPortCmbItem selectedPort = (SerialPortCmbItem) serialPortsCmb.getSelectedItem();
     if (selectedPort != null) {
       settings.setPortName(selectedPort.getSerialPort().getSystemPortName());
@@ -175,7 +178,7 @@ public class SerialMonitor extends JDialog {
     clearButton.addActionListener(e -> serialText.setText(""));
     buttonSend.addActionListener(e -> {
       try {
-        openedPort.getOutputStream().write(textFieldLineToSend.getText().concat("\n").getBytes());
+        openedPort.getOutputStream().write(textFieldLineToSend.getText().concat(getNewLine()).getBytes());
         textFieldLineToSend.setText("");
       } catch (IOException e1) {
         closePort();
@@ -188,6 +191,23 @@ public class SerialMonitor extends JDialog {
         onApplicationExit();
       }
     });
+  }
+
+  private String getNewLine() {
+    String nlSeparator = (String) comboBoxLineEnding.getSelectedItem();
+    if (nlSeparator == null) {
+      return "";
+    }
+    if (nlSeparator.equals("NL")) {
+      return "\n";
+    }
+    if (nlSeparator.equals("CR")) {
+      return "\r";
+    }
+    if (nlSeparator.equals("NL+CR")) {
+      return "\n\r";
+    }
+    return "";
   }
 
 }

@@ -9,6 +9,7 @@ public class Settings {
   private Integer baudRate = 9600;
   private String portName;
   private Boolean autoscroll = false;
+  private String lineEnding = "NL";
 
   public Integer getWidth() {
     return width;
@@ -64,5 +65,13 @@ public class Settings {
 
   public void setAutoscroll(Boolean autoscroll) {
     this.autoscroll = autoscroll;
+  }
+
+  public String getLineEnding() {
+    return lineEnding;
+  }
+
+  public void setLineEnding(String lineEnding) {
+    this.lineEnding = lineEnding;
   }
 }

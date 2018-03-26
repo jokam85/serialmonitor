@@ -9,7 +9,7 @@
 
 ## v1.1 (TODO)
 * data sending
-* new line separator (TODO)
+* new line separator
 * sending history (TODO)
 * command shortcuts (TODO)
 * data sending on enter or as typed (TODO)
