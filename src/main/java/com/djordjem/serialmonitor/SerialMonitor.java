@@ -5,7 +5,9 @@ import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 
 import javax.swing.*;
-import java.awt.event.*;
+import javax.swing.text.DefaultCaret;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,16 +20,15 @@ public class SerialMonitor extends JDialog {
   private List<SerialPort> ports = new ArrayList<>();
   private SerialPort openedPort = null;
 
-  private int[] rates = new int[]{9600, 115200};
+  private int[] rates = new int[]{110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 57600, 115200, 128000, 256000};
 
   private JPanel contentPane;
   private JComboBox<SerialPortCmbItem> serialPortsCmb;
   private JButton openPortBtn;
-  private JTextArea serialText;
   private JComboBox<Integer> baudRateCmb;
   private JButton closeButton;
   private JButton clearButton;
-
+  private JTextArea serialText;
 
   private SerialPortDataListener dataListener = new SerialPortDataListener() {
     public int getListeningEvents() {
@@ -167,4 +168,10 @@ public class SerialMonitor extends JDialog {
       }
     }
   });
+
+  private void createUIComponents() {
+    this.serialText = new JTextArea();
+    DefaultCaret caret = (DefaultCaret) serialText.getCaret();
+    caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+  }
 }

@@ -8,6 +8,7 @@
 * all possible baudrates (TODO)
 
 ## Planned features (TODO)
+* sending history
 * command shortcuts
 * organize code better
 * display connection status
@@ -21,8 +22,10 @@
 * executing external programs on pattern recognized
 * autoconnect to new port if not connected
 * self contained
-* binary data
+* binary data (byte separation)
 * limited and configurable console window content
 * settings menu
 * testing
 * move to stream API
+* chat mode
+* sniffer (passthrough mode)
