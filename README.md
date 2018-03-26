@@ -1,7 +1,7 @@
 # Serial monitor
 
 ## Releases
-## v1.0
+## v1.0 [download](https://github.com/jokam85/serialmonitor/releases/download/v1.0/serialmonitor.jar)
 * simple textual console monitoring
 * remember interface state and settings in user folder
 * all possible baudrates
