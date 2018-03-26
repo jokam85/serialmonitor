@@ -7,13 +7,15 @@
 * all possible baudrates
 * autoscroll
 
+## v1.1 (TODO)
+* data sending and new line char (TODO)
+* sending history (TODO)
+* command shortcuts (TODO)
+* data sending on enter or as typed
+
 ## Planned features (TODO)
-* data sending and new line char
-* sending history
-* command shortcuts
 * organize code better
 * display connection status
-* data sending on enter or as typed
 * flush window content to file
 * apend to file
 * pattern recognition (highlight or show only pattern)
@@ -21,11 +23,9 @@
 * RTS, CTS...
 * executing external programs on pattern recognized
 * autoconnect to new port if not connected
-* self contained
 * binary data (byte separation)
 * limited and configurable console window content
 * settings menu
-* testing
 * move to stream API
 * chat mode
 * sniffer (passthrough mode)
