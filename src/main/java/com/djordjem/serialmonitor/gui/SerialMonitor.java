@@ -90,8 +90,26 @@ public class SerialMonitor extends JDialog {
     interfaceUpdateThread.start();
   }
 
+  private void openPort() {
+    closePort();
+    int index = serialPortsCmb.getSelectedIndex();
+    openedPort = ports.get(index);
+    Integer baudRate = (Integer) baudRateCmb.getSelectedItem();
+    int baud = baudRate == null ? 9600 : baudRate;
+    openedPort.setBaudRate(baud);
+    openedPort.openPort();
+    openedPort.addDataListener(dataListener);
+  }
 
-  private void onCancel() {
+  private void closePort() {
+    if (openedPort != null && openedPort.isOpen()) {
+      openedPort.removeDataListener();
+      openedPort.closePort();
+      openedPort = null;
+    }
+  }
+
+  private void onApplicationExit() {
     interfaceUpdateThread.interrupt();
     dispose();
     settings.setPosX(getX());
@@ -110,7 +128,6 @@ public class SerialMonitor extends JDialog {
   private void initPorts(boolean shouldSetDefaultValue) {
     if (needsReloadingPortList()) {
       this.ports = Arrays.asList(SerialPort.getCommPorts());
-      ;
       SerialPortCmbItem previoslySelectedPort = (SerialPortCmbItem) serialPortsCmb.getSelectedItem();
       serialPortsCmb.removeAllItems();
       for (SerialPort sp : ports) {
@@ -148,34 +165,15 @@ public class SerialMonitor extends JDialog {
     baudRateCmb.setSelectedItem(settings.getBaudRate());
   }
 
-  private void openPort() {
-    closePort();
-    int index = serialPortsCmb.getSelectedIndex();
-    openedPort = ports.get(index);
-    Integer baudRate = (Integer) baudRateCmb.getSelectedItem();
-    int baud = baudRate == null ? 9600 : baudRate;
-    openedPort.setBaudRate(baud);
-    openedPort.openPort();
-    openedPort.addDataListener(dataListener);
-
-  }
-
-  private void closePort() {
-    if (openedPort != null && openedPort.isOpen()) {
-      openedPort.removeDataListener();
-      openedPort.closePort();
-      openedPort = null;
-    }
-  }
-
   private void initListeners() {
     openPortBtn.addActionListener(e -> openPort());
     closeButton.addActionListener(e -> closePort());
     clearButton.addActionListener(e -> serialText.setText(""));
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
-        onCancel();
+        onApplicationExit();
       }
     });
   }
+
 }
