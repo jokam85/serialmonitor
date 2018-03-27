@@ -2,7 +2,7 @@
 
 ## Releases
 
-## v1.1 (TODO)
+## v1.1 [download](https://github.com/jokam85/serialmonitor/releases/download/v1.1/serialmonitor.jar)
 * data sending
 * new line separator
 * data sending on enter or as typed
