@@ -178,11 +178,17 @@ public class SerialMonitor extends JDialog {
       public void keyPressed(KeyEvent e) {
         if (checkBoxSendAsType.isSelected()) {
           sendChar(e.getKeyChar());
-          clearSendField();
         } else {
           if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             buttonSend.doClick();
           }
+        }
+      }
+
+      @Override
+      public void keyReleased(KeyEvent e) {
+        if (checkBoxSendAsType.isSelected()) {
+          clearSendField();
         }
       }
     });

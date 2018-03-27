@@ -31,3 +31,4 @@
 * move to stream API
 * chat mode
 * sniffer (passthrough mode)
+* copy/paste
