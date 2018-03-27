@@ -1,5 +1,14 @@
 # Serial monitor
 
+Yet another serial port terminal written as a replacement for Arduino serial monitor. 
+It features a history of sent commands so they can be easily resent on doubleclik without 
+need to retype them. It can send text as a line (press enter or click "send") or as a stream of characters 
+as you type them.
+
+At least [Java JRE 8](https://java.com/en/download/) is required to launch this application.
+
+![Screenshot](https://raw.githubusercontent.com/jokam85/serialmonitor/master/docs/Screenshot_1.jpg)
+
 ## Releases
 
 ## v1.1 [download](https://github.com/jokam85/serialmonitor/releases/download/v1.1/serialmonitor.jar)
