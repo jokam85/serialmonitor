@@ -17,6 +17,7 @@
 * autoscroll
 
 ## Planned features (TODO)
+* lock history entries (prevent them frome being cleared)
 * command shortcuts
 * history maximum number of entries (FIFO)
 * organize code better
