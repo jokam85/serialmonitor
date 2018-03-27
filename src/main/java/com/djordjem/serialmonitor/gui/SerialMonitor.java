@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.djordjem.serialmonitor.constants.Constants.POSSIBLE_BAUDRATES;
 import static com.djordjem.serialmonitor.settings.SettingsService.SETTINGS;
 
 public class SerialMonitor extends JDialog {
@@ -25,8 +26,6 @@ public class SerialMonitor extends JDialog {
   // Models
   private Settings settings;
   private DefaultListModel<String> historyListModel;
-
-  private int[] rates = new int[]{110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 57600, 115200, 128000, 256000};
 
   JPanel contentPane;
   JComboBox<SerialPortCmbItem> serialPortsCmb;
@@ -170,7 +169,7 @@ public class SerialMonitor extends JDialog {
   }
 
   private void initRates() {
-    for (int rate : rates) {
+    for (int rate : POSSIBLE_BAUDRATES) {
       baudRateCmb.addItem(rate);
     }
     baudRateCmb.setSelectedItem(settings.getBaudRate());
