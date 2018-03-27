@@ -11,6 +11,8 @@ public class Settings {
   private Boolean autoscroll = false;
   private Boolean sendAsYouType = false;
   private String lineEnding = "NL";
+  private Integer historyTextSeparatorPosition = 100;
+  private History history = new History();
 
   public Integer getWidth() {
     return width;
@@ -82,5 +84,21 @@ public class Settings {
 
   public void setSendAsYouType(Boolean sendAsYouType) {
     this.sendAsYouType = sendAsYouType;
+  }
+
+  public Integer getHistoryTextSeparatorPosition() {
+    return historyTextSeparatorPosition;
+  }
+
+  public void setHistoryTextSeparatorPosition(Integer historyTextSeparatorPosition) {
+    this.historyTextSeparatorPosition = historyTextSeparatorPosition;
+  }
+
+  public History getHistory() {
+    return history;
+  }
+
+  public void setHistory(History history) {
+    this.history = history;
   }
 }

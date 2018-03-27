@@ -15,13 +15,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.djordjem.serialmonitor.settings.SettingsService.SETTINGS;
 
 public class SerialMonitor extends JDialog {
 
+  // Ports
   private List<SerialPort> ports = new ArrayList<>();
   private SerialPort openedPort = null;
+
+  // Models
+  private Settings settings;
+  private DefaultListModel<String> historyListModel;
 
   private int[] rates = new int[]{110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 57600, 115200, 128000, 256000};
 
@@ -38,9 +44,11 @@ public class SerialMonitor extends JDialog {
   private JComboBox comboBoxLineEnding;
   private JCheckBox checkBoxSendAsType;
   private JPanel jPanelFooter;
-  private Settings settings;
+  private JList<String> historyList;
+  private JSplitPane historyTextSplit;
+  private JButton clearHistorybutton;
 
-  private Timer guiUpdateTimer = new Timer(300, (event) -> {
+  private Timer guiUpdateTimer = new Timer(250, (event) -> {
     initPorts(false);
     serialPortsCmb.setEnabled(openedPort == null || !openedPort.isOpen());
     baudRateCmb.setEnabled(openedPort == null || !openedPort.isOpen());
@@ -85,10 +93,17 @@ public class SerialMonitor extends JDialog {
     initPorts(true);
     initRates();
     initListeners();
+
+    historyListModel = new DefaultListModel<>();
+    historyList.setModel(historyListModel);
+    settings.getHistory().forEach(historyListModel::addElement);
+
     checkBoxAutoscroll.setSelected(settings.getAutoscroll());
     checkBoxSendAsType.setSelected(settings.getSendAsYouType());
     comboBoxLineEnding.setSelectedItem(settings.getLineEnding());
+    historyTextSplit.setDividerLocation(settings.getHistoryTextSeparatorPosition());
     guiUpdateTimer.start();
+    clearHistorybutton.addActionListener(e -> historyListModel.clear());
   }
 
   private void openPort() {
@@ -121,6 +136,9 @@ public class SerialMonitor extends JDialog {
     settings.setAutoscroll(checkBoxAutoscroll.isSelected());
     settings.setSendAsYouType(checkBoxSendAsType.isSelected());
     settings.setLineEnding(comboBoxLineEnding.getSelectedItem().toString());
+    settings.setHistoryTextSeparatorPosition(historyTextSplit.getDividerLocation());
+    int historySize = historyListModel.getSize();
+    IntStream.range(0, historySize).forEach(i -> settings.getHistory().add(historyListModel.getElementAt(i)));
     final SerialPortCmbItem selectedPort = (SerialPortCmbItem) serialPortsCmb.getSelectedItem();
     if (selectedPort != null) {
       settings.setPortName(selectedPort.getSerialPort().getSystemPortName());
@@ -218,7 +236,9 @@ public class SerialMonitor extends JDialog {
 
   private void sendEnteredText() {
     try {
-      openedPort.getOutputStream().write(textFieldLineToSend.getText().concat(getNewLine()).getBytes());
+      String text = textFieldLineToSend.getText();
+      historyListModel.insertElementAt(text, 0);
+      openedPort.getOutputStream().write(text.concat(getNewLine()).getBytes());
       clearSendField();
     } catch (IOException e1) {
       closePort();
