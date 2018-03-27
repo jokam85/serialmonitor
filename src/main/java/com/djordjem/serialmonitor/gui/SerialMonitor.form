@@ -175,6 +175,7 @@
                 <properties>
                   <model/>
                   <selectionMode value="0"/>
+                  <toolTipText value="History"/>
                 </properties>
               </component>
             </children>

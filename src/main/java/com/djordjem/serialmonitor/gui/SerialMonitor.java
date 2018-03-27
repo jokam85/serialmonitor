@@ -20,7 +20,7 @@ public class SerialMonitor extends JDialog {
 
   // Ports
   private List<SerialPort> ports = new ArrayList<>();
-  private SerialPort openedPort = null;
+  SerialPort openedPort = null;
 
   // Models
   private Settings settings;
@@ -28,33 +28,24 @@ public class SerialMonitor extends JDialog {
 
   private int[] rates = new int[]{110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 57600, 115200, 128000, 256000};
 
-  private JPanel contentPane;
-  private JComboBox<SerialPortCmbItem> serialPortsCmb;
-  private JButton openPortBtn;
-  private JComboBox<Integer> baudRateCmb;
-  private JButton closeButton;
-  private JButton clearButton;
-  private JTextArea serialText;
-  private JCheckBox checkBoxAutoscroll;
-  private JTextField textFieldLineToSend;
-  private JButton buttonSend;
-  private JComboBox comboBoxLineEnding;
-  private JCheckBox checkBoxSendAsType;
-  private JPanel jPanelFooter;
-  private JList<String> historyList;
-  private JSplitPane historyTextSplit;
-  private JButton clearHistorybutton;
+  JPanel contentPane;
+  JComboBox<SerialPortCmbItem> serialPortsCmb;
+  JButton openPortBtn;
+  JComboBox<Integer> baudRateCmb;
+  JButton closeButton;
+  JButton clearButton;
+  JTextArea serialText;
+  JCheckBox checkBoxAutoscroll;
+  JTextField textFieldLineToSend;
+  JButton buttonSend;
+  JComboBox comboBoxLineEnding;
+  JCheckBox checkBoxSendAsType;
+  JPanel jPanelFooter;
+  JList<String> historyList;
+  JSplitPane historyTextSplit;
+  JButton clearHistorybutton;
 
-  private Timer guiUpdateTimer = new Timer(250, (event) -> {
-    initPorts(false);
-    serialPortsCmb.setEnabled(openedPort == null || !openedPort.isOpen());
-    baudRateCmb.setEnabled(openedPort == null || !openedPort.isOpen());
-    openPortBtn.setVisible(openedPort == null || !openedPort.isOpen());
-    closeButton.setVisible(openedPort != null && openedPort.isOpen());
-    textFieldLineToSend.setEnabled(openedPort != null && openedPort.isOpen());
-    buttonSend.setEnabled(openedPort != null && openedPort.isOpen() && !checkBoxSendAsType.isSelected());
-    historyList.setEnabled(openedPort != null && openedPort.isOpen());
-  });
+  private GuiUpdater guiUpdater = new GuiUpdater(this);
 
   private SerialPortDataListener dataListener = new SerialPortDataListener() {
     public int getListeningEvents() {
@@ -100,8 +91,8 @@ public class SerialMonitor extends JDialog {
     checkBoxSendAsType.setSelected(settings.getSendAsYouType());
     comboBoxLineEnding.setSelectedItem(settings.getLineEnding());
     historyTextSplit.setDividerLocation(settings.getHistoryTextSeparatorPosition());
-    guiUpdateTimer.start();
-    clearHistorybutton.addActionListener(e -> historyListModel.clear());
+    guiUpdater.start();
+
   }
 
   private void openPort() {
@@ -124,7 +115,7 @@ public class SerialMonitor extends JDialog {
   }
 
   private void onApplicationExit() {
-    guiUpdateTimer.stop();
+    guiUpdater.stop();
     dispose();
     settings.setPosX(getX());
     settings.setPosY(getY());
@@ -145,7 +136,7 @@ public class SerialMonitor extends JDialog {
     SETTINGS.flushToFile();
   }
 
-  private void initPorts(boolean shouldSetDefaultValue) {
+  void initPorts(boolean shouldSetDefaultValue) {
     if (needsReloadingPortList()) {
       this.ports = Arrays.asList(SerialPort.getCommPorts());
       SerialPortCmbItem previoslySelectedPort = (SerialPortCmbItem) serialPortsCmb.getSelectedItem();
@@ -190,6 +181,7 @@ public class SerialMonitor extends JDialog {
     closeButton.addActionListener(e -> closePort());
     clearButton.addActionListener(e -> serialText.setText(""));
     buttonSend.addActionListener(e -> sendEnteredText());
+    clearHistorybutton.addActionListener(e -> historyListModel.clear());
     textFieldLineToSend.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
@@ -209,7 +201,6 @@ public class SerialMonitor extends JDialog {
         }
       }
     });
-
     historyList.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent evt) {
         JList list = (JList) evt.getSource();
@@ -219,7 +210,6 @@ public class SerialMonitor extends JDialog {
         }
       }
     });
-
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
         onApplicationExit();
