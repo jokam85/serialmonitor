@@ -1,6 +1,7 @@
 package com.djordjem.serialmonitor.settings;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +11,10 @@ public enum SettingsService {
   SETTINGS;
 
   static final ObjectMapper objectMapper = new ObjectMapper();
+
+  static {
+    objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+  }
 
   static final String USER_DIR = System.getProperty("user.home");
   static final String FILE_NAME = ".serialmonitor";
