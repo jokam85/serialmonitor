@@ -1,11 +1,7 @@
 # Serial monitor
 
 ## Releases
-## v1.0 [download](https://github.com/jokam85/serialmonitor/releases/download/v1.0/serialmonitor.jar)
-* simple textual console monitoring
-* remember interface state and settings in user folder
-* all possible baudrates
-* autoscroll
+
 
 ## v1.1 (TODO)
 * data sending
@@ -14,6 +10,13 @@
 * sending history (TODO)
 * command shortcuts (TODO)
 * BUGFIX using swing timer instead of thread for GUI update
+* BUGFIX clear input field when "check as you type" option is enabled
+
+## v1.0 [download](https://github.com/jokam85/serialmonitor/releases/download/v1.0/serialmonitor.jar)
+* simple textual console monitoring
+* remember interface state and settings in user folder
+* all possible baudrates
+* autoscroll
 
 ## Planned features (TODO)
 * organize code better
