@@ -2,13 +2,11 @@
 
 ## Releases
 
-
 ## v1.1 (TODO)
 * data sending
 * new line separator
 * data sending on enter or as typed
-* sending history (TODO)
-* command shortcuts (TODO)
+* sending history
 * BUGFIX using swing timer instead of thread for GUI update
 * BUGFIX clear input field when "check as you type" option is enabled
 
@@ -19,8 +17,12 @@
 * autoscroll
 
 ## Planned features (TODO)
+* command shortcuts
+* history maximum number of entries (FIFO)
 * organize code better
 * display connection status
+* display errors when sending fails
+* display errors port fails to open
 * flush window content to file
 * apend to file
 * pattern recognition (highlight or show only pattern)

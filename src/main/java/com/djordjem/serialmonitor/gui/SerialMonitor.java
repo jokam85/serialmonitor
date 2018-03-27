@@ -6,10 +6,7 @@ import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 
 import javax.swing.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,6 +53,7 @@ public class SerialMonitor extends JDialog {
     closeButton.setVisible(openedPort != null && openedPort.isOpen());
     textFieldLineToSend.setEnabled(openedPort != null && openedPort.isOpen());
     buttonSend.setEnabled(openedPort != null && openedPort.isOpen() && !checkBoxSendAsType.isSelected());
+    historyList.setEnabled(openedPort != null && openedPort.isOpen());
   });
 
   private SerialPortDataListener dataListener = new SerialPortDataListener() {
@@ -138,6 +136,7 @@ public class SerialMonitor extends JDialog {
     settings.setLineEnding(comboBoxLineEnding.getSelectedItem().toString());
     settings.setHistoryTextSeparatorPosition(historyTextSplit.getDividerLocation());
     int historySize = historyListModel.getSize();
+    settings.getHistory().clear();
     IntStream.range(0, historySize).forEach(i -> settings.getHistory().add(historyListModel.getElementAt(i)));
     final SerialPortCmbItem selectedPort = (SerialPortCmbItem) serialPortsCmb.getSelectedItem();
     if (selectedPort != null) {
@@ -210,6 +209,17 @@ public class SerialMonitor extends JDialog {
         }
       }
     });
+
+    historyList.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent evt) {
+        JList list = (JList) evt.getSource();
+        if (evt.getClickCount() == 2) {
+          int index = list.locationToIndex(evt.getPoint());
+          sendLine(historyListModel.get(index), false);
+        }
+      }
+    });
+
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
         onApplicationExit();
@@ -217,29 +227,18 @@ public class SerialMonitor extends JDialog {
     });
   }
 
-  private String getNewLine() {
-    String nlSeparator = (String) comboBoxLineEnding.getSelectedItem();
-    if (nlSeparator == null) {
-      return "";
-    }
-    if (nlSeparator.equals("NL")) {
-      return "\n";
-    }
-    if (nlSeparator.equals("CR")) {
-      return "\r";
-    }
-    if (nlSeparator.equals("NL+CR")) {
-      return "\n\r";
-    }
-    return "";
+  private void sendEnteredText() {
+    String text = textFieldLineToSend.getText();
+    sendLine(text, true);
+    clearSendField();
   }
 
-  private void sendEnteredText() {
+  private void sendLine(String line, boolean addToHistory) {
     try {
-      String text = textFieldLineToSend.getText();
-      historyListModel.insertElementAt(text, 0);
-      openedPort.getOutputStream().write(text.concat(getNewLine()).getBytes());
-      clearSendField();
+      openedPort.getOutputStream().write(line.concat(getNewLine()).getBytes());
+      if (addToHistory) {
+        historyListModel.insertElementAt(line, 0);
+      }
     } catch (IOException e1) {
       closePort();
       e1.printStackTrace();
@@ -257,5 +256,22 @@ public class SerialMonitor extends JDialog {
 
   private void clearSendField() {
     textFieldLineToSend.setText("");
+  }
+
+  private String getNewLine() {
+    String nlSeparator = (String) comboBoxLineEnding.getSelectedItem();
+    if (nlSeparator == null) {
+      return "";
+    }
+    if (nlSeparator.equals("NL")) {
+      return "\n";
+    }
+    if (nlSeparator.equals("CR")) {
+      return "\r";
+    }
+    if (nlSeparator.equals("NL+CR")) {
+      return "\n\r";
+    }
+    return "";
   }
 }
