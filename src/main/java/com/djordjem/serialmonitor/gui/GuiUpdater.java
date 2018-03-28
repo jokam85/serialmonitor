@@ -1,6 +1,6 @@
 package com.djordjem.serialmonitor.gui;
 
-import com.fazecast.jSerialComm.SerialPort;
+import com.djordjem.serialmonitor.serialport.SerialPortService;
 
 import javax.swing.*;
 
@@ -9,15 +9,15 @@ public class GuiUpdater {
   private SerialMonitor serialMonitor;
 
   private Timer guiUpdateTimer = new Timer(250, (event) -> {
-    SerialPort openedPort = serialMonitor.openedPort;
-    serialMonitor.initPorts(false);
-    serialMonitor.serialPortsCmb.setEnabled(openedPort == null || !openedPort.isOpen());
-    serialMonitor.baudRateCmb.setEnabled(openedPort == null || !openedPort.isOpen());
-    serialMonitor.openPortBtn.setVisible(openedPort == null || !openedPort.isOpen());
-    serialMonitor.closeButton.setVisible(openedPort != null && openedPort.isOpen());
-    serialMonitor.textFieldLineToSend.setEnabled(openedPort != null && openedPort.isOpen());
-    serialMonitor.buttonSend.setEnabled(openedPort != null && openedPort.isOpen() && !serialMonitor.checkBoxSendAsType.isSelected());
-    serialMonitor.historyList.setEnabled(openedPort != null && openedPort.isOpen());
+    boolean isPortOpened = SerialPortService.INSTANCE.isPortOpen();
+    serialMonitor.initPorts();
+    serialMonitor.serialPortsCmb.setEnabled(!isPortOpened);
+    serialMonitor.baudRateCmb.setEnabled(!isPortOpened);
+    serialMonitor.openPortBtn.setVisible(!isPortOpened);
+    serialMonitor.closeButton.setVisible(isPortOpened);
+    serialMonitor.textFieldLineToSend.setEnabled(isPortOpened);
+    serialMonitor.buttonSend.setEnabled(isPortOpened && !serialMonitor.checkBoxSendAsType.isSelected());
+    serialMonitor.historyList.setEnabled(isPortOpened);
   });
 
   GuiUpdater(SerialMonitor serialMonitor) {

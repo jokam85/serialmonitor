@@ -1,34 +1,27 @@
 package com.djordjem.serialmonitor.gui;
 
+import com.djordjem.serialmonitor.serialport.SerialPortDTO;
+import com.djordjem.serialmonitor.serialport.SerialPortEventListener;
+import com.djordjem.serialmonitor.serialport.SerialPortService;
 import com.djordjem.serialmonitor.settings.Settings;
-import com.fazecast.jSerialComm.SerialPort;
-import com.fazecast.jSerialComm.SerialPortDataListener;
-import com.fazecast.jSerialComm.SerialPortEvent;
 
 import javax.swing.*;
 import java.awt.event.*;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.djordjem.serialmonitor.constants.Constants.POSSIBLE_BAUDRATES;
 import static com.djordjem.serialmonitor.settings.SettingsService.SETTINGS;
 
-public class SerialMonitor extends JDialog {
-
-  // Ports
-  private List<SerialPort> ports = new ArrayList<>();
-  SerialPort openedPort = null;
+public class SerialMonitor extends JDialog implements SerialPortEventListener {
 
   // Models
   private Settings settings;
   private DefaultListModel<String> historyListModel;
+  private CustomComboModel<SerialPortDTO> portsCmbModel;
 
   JPanel contentPane;
-  JComboBox<SerialPortCmbItem> serialPortsCmb;
+  JComboBox<SerialPortDTO> serialPortsCmb;
   JButton openPortBtn;
   JComboBox<Integer> baudRateCmb;
   JButton closeButton;
@@ -46,76 +39,54 @@ public class SerialMonitor extends JDialog {
 
   private GuiUpdater guiUpdater = new GuiUpdater(this);
 
-  private SerialPortDataListener dataListener = new SerialPortDataListener() {
-    public int getListeningEvents() {
-      return SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
-    }
-
-    public void serialEvent(SerialPortEvent event) {
-      if (event.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
-        return;
-      }
-      try {
-        byte[] newData = new byte[openedPort.bytesAvailable()];
-        int numRead = openedPort.readBytes(newData, newData.length);
-        if (numRead > 0) {
-          String data = new String(newData);
-          serialText.append(data);
-          if (checkBoxAutoscroll.isSelected()) {
-            serialText.setCaretPosition(serialText.getDocument().getLength());
-          }
-        }
-      } catch (Exception e) {
-        closePort();
-        e.printStackTrace();
-      }
-    }
-  };
-
   public SerialMonitor() {
     super(null, java.awt.Dialog.ModalityType.TOOLKIT_MODAL);
     settings = SETTINGS.getSettings();
-    setContentPane(contentPane);
-    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-    setTitle("Serial monitor");
-    initPorts(true);
-    initRates();
-    initListeners();
+
+    portsCmbModel = new CustomComboModel<>();
+    serialPortsCmb.setModel(portsCmbModel);
 
     historyListModel = new DefaultListModel<>();
     historyList.setModel(historyListModel);
-    settings.getHistory().forEach(historyListModel::addElement);
 
-    checkBoxAutoscroll.setSelected(settings.getAutoscroll());
-    checkBoxSendAsType.setSelected(settings.getSendAsYouType());
-    comboBoxLineEnding.setSelectedItem(settings.getLineEnding());
-    historyTextSplit.setDividerLocation(settings.getHistoryTextSeparatorPosition());
+    setContentPane(contentPane);
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+    setTitle("Serial monitor");
+    initPorts();
+    initRates();
+    initListeners();
+    applySettings();
+
     guiUpdater.start();
+    SerialPortService.INSTANCE.addDataListener(this);
+  }
 
+  @Override
+  public void onNewData(byte[] newData) {
+    String data = new String(newData);
+    serialText.append(data);
+    if (checkBoxAutoscroll.isSelected()) {
+      serialText.setCaretPosition(serialText.getDocument().getLength());
+    }
   }
 
   private void openPort() {
-    closePort();
-    int index = serialPortsCmb.getSelectedIndex();
-    openedPort = ports.get(index);
-    Integer baudRate = (Integer) baudRateCmb.getSelectedItem();
-    int baud = baudRate == null ? 9600 : baudRate;
-    openedPort.setBaudRate(baud);
-    openedPort.openPort();
-    openedPort.addDataListener(dataListener);
-  }
-
-  private void closePort() {
-    if (openedPort != null && openedPort.isOpen()) {
-      openedPort.removeDataListener();
-      openedPort.closePort();
-      openedPort = null;
+    SerialPortDTO selectedItem = (SerialPortDTO) serialPortsCmb.getSelectedItem();
+    if (selectedItem != null) {
+      String portName = selectedItem.getSystemPortName();
+      Integer baudRate = (Integer) baudRateCmb.getSelectedItem();
+      int baud = baudRate == null ? 9600 : baudRate;
+      SerialPortService.INSTANCE.openPort(portName, baud);
     }
   }
 
   private void onApplicationExit() {
     guiUpdater.stop();
+    SerialPortService.INSTANCE.closePort();
+    SerialPortService.INSTANCE.removeDataListener(this);
+
     dispose();
+
     settings.setPosX(getX());
     settings.setPosY(getY());
     settings.setWidth(getWidth());
@@ -123,49 +94,39 @@ public class SerialMonitor extends JDialog {
     settings.setBaudRate((Integer) baudRateCmb.getSelectedItem());
     settings.setAutoscroll(checkBoxAutoscroll.isSelected());
     settings.setSendAsYouType(checkBoxSendAsType.isSelected());
-    settings.setLineEnding(comboBoxLineEnding.getSelectedItem().toString());
+    settings.setLineEnding((String) comboBoxLineEnding.getSelectedItem());
     settings.setHistoryTextSeparatorPosition(historyTextSplit.getDividerLocation());
     int historySize = historyListModel.getSize();
     settings.getHistory().clear();
     IntStream.range(0, historySize).forEach(i -> settings.getHistory().add(historyListModel.getElementAt(i)));
-    final SerialPortCmbItem selectedPort = (SerialPortCmbItem) serialPortsCmb.getSelectedItem();
+    final SerialPortDTO selectedPort = (SerialPortDTO) serialPortsCmb.getSelectedItem();
     if (selectedPort != null) {
-      settings.setPortName(selectedPort.getSerialPort().getSystemPortName());
+      settings.setPortName(selectedPort.getSystemPortName());
     }
     SETTINGS.flushToFile();
   }
 
-  void initPorts(boolean shouldSetDefaultValue) {
+  /**
+   * Verifies if new COM ports are available and updates combo box with new ports.
+   */
+  void initPorts() {
     if (needsReloadingPortList()) {
-      this.ports = Arrays.asList(SerialPort.getCommPorts());
-      SerialPortCmbItem previoslySelectedPort = (SerialPortCmbItem) serialPortsCmb.getSelectedItem();
+      List<SerialPortDTO> ports = SerialPortService.INSTANCE.getPorts();
+      SerialPortDTO previoslySelectedPort = (SerialPortDTO) serialPortsCmb.getSelectedItem();
       serialPortsCmb.removeAllItems();
-      for (SerialPort sp : ports) {
-        SerialPortCmbItem item = new SerialPortCmbItem(sp);
-        serialPortsCmb.addItem(item);
-        // Prethodno odabrani port
-        if (previoslySelectedPort != null) {
-          String selectedPortName = previoslySelectedPort.getSerialPort().getDescriptivePortName();
-          if (sp.getDescriptivePortName().equals(selectedPortName)) {
-            serialPortsCmb.setSelectedItem(item);
-          }
-        }
-        // default
-        if (shouldSetDefaultValue) {
-          String portName = settings.getPortName();
-          if (portName != null && portName.equals(item.getSerialPort().getSystemPortName())) {
-            serialPortsCmb.setSelectedItem(item);
-          }
+      for (SerialPortDTO sp : ports) {
+        serialPortsCmb.addItem(sp);
+        if (sp.equals(previoslySelectedPort)) {
+          serialPortsCmb.setSelectedItem(sp);
         }
       }
     }
   }
 
   private boolean needsReloadingPortList() {
-    List<SerialPort> currentSystemPorts = Arrays.asList(SerialPort.getCommPorts());
-    List<String> systemPortNames = currentSystemPorts.stream().map(SerialPort::getDescriptivePortName).collect(Collectors.toList());
-    List<String> comboPortNames = this.ports.stream().map(SerialPort::getDescriptivePortName).collect(Collectors.toList());
-    return !(comboPortNames.containsAll(systemPortNames) && comboPortNames.size() == systemPortNames.size());
+    List<SerialPortDTO> systemPorts = SerialPortService.INSTANCE.getPorts();
+    List<SerialPortDTO> comboBoxPorts = portsCmbModel.getAllItems();
+    return !(comboBoxPorts.containsAll(systemPorts) && comboBoxPorts.size() == systemPorts.size());
   }
 
   private void initRates() {
@@ -177,7 +138,7 @@ public class SerialMonitor extends JDialog {
 
   private void initListeners() {
     openPortBtn.addActionListener(e -> openPort());
-    closeButton.addActionListener(e -> closePort());
+    closeButton.addActionListener(e -> SerialPortService.INSTANCE.closePort());
     clearButton.addActionListener(e -> serialText.setText(""));
     buttonSend.addActionListener(e -> sendEnteredText());
     clearHistorybutton.addActionListener(e -> historyListModel.clear());
@@ -223,24 +184,14 @@ public class SerialMonitor extends JDialog {
   }
 
   private void sendLine(String line, boolean addToHistory) {
-    try {
-      openedPort.getOutputStream().write(line.concat(getNewLine()).getBytes());
-      if (addToHistory) {
-        historyListModel.insertElementAt(line, 0);
-      }
-    } catch (IOException e1) {
-      closePort();
-      e1.printStackTrace();
+    SerialPortService.INSTANCE.sendLine(line, getNewLine());
+    if (addToHistory) {
+      historyListModel.insertElementAt(line, 0);
     }
   }
 
   private void sendChar(char c) {
-    try {
-      openedPort.getOutputStream().write(c);
-    } catch (IOException e1) {
-      closePort();
-      e1.printStackTrace();
-    }
+    SerialPortService.INSTANCE.sendChar(c);
   }
 
   private void clearSendField() {
@@ -262,5 +213,17 @@ public class SerialMonitor extends JDialog {
       return "\n\r";
     }
     return "";
+  }
+
+  private void applySettings() {
+    String portName = settings.getPortName();
+    if (portName != null) {
+      serialPortsCmb.setSelectedItem(SerialPortService.INSTANCE.getPort(settings.getPortName()));
+    }
+    settings.getHistory().forEach(historyListModel::addElement);
+    checkBoxAutoscroll.setSelected(settings.getAutoscroll());
+    checkBoxSendAsType.setSelected(settings.getSendAsYouType());
+    comboBoxLineEnding.setSelectedItem(settings.getLineEnding());
+    historyTextSplit.setDividerLocation(settings.getHistoryTextSeparatorPosition());
   }
 }
