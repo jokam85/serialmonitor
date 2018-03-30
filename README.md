@@ -11,6 +11,12 @@ as you type them.
 
 ## Releases
 
+## v1.2 (TODO)
+* command shortcuts
+* shortcut groups
+* lock history entries (prevent them frome being cleared)
+* menu (save log as, save history as, shortcut editing)
+
 ## v1.1 [download](https://github.com/jokam85/serialmonitor/releases/download/v1.1/serialmonitor.jar)
 * data sending
 * new line separator
@@ -26,18 +32,15 @@ as you type them.
 * autoscroll
 
 ## Planned features (TODO)
-* custom command groups
-* lock history entries (prevent them frome being cleared)
-* command shortcuts
+* display special chars
+* options
 * history maximum number of entries (FIFO)
-* organize code better
 * display connection status
 * display errors when sending fails
 * display errors port fails to open
 * flush window content to file
 * apend to file
 * pattern recognition (highlight or show only pattern)
-* display special chars
 * RTS, CTS...
 * executing external programs on pattern recognized
 * autoconnect to new port if not connected
