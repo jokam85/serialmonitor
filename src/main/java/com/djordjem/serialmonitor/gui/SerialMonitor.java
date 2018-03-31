@@ -1,7 +1,7 @@
 package com.djordjem.serialmonitor.gui;
 
 import com.djordjem.serialmonitor.serialport.SerialPortDTO;
-import com.djordjem.serialmonitor.serialport.SerialPortEventListener;
+import com.djordjem.serialmonitor.serialport.SerialPortDataListener;
 import com.djordjem.serialmonitor.serialport.SerialPortService;
 import com.djordjem.serialmonitor.settings.CommandGroup;
 import com.djordjem.serialmonitor.settings.Settings;
@@ -16,7 +16,7 @@ import java.util.stream.IntStream;
 import static com.djordjem.serialmonitor.constants.Constants.POSSIBLE_BAUDRATES;
 import static com.djordjem.serialmonitor.settings.SettingsService.SETTINGS;
 
-public class SerialMonitor extends JDialog implements SerialPortEventListener {
+public class SerialMonitor extends JDialog implements SerialPortDataListener {
 
   // Models
   private Settings settings;

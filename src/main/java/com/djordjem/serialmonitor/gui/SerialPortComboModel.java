@@ -2,32 +2,26 @@ package com.djordjem.serialmonitor.gui;
 
 import com.djordjem.serialmonitor.serialport.SerialPortDTO;
 import com.djordjem.serialmonitor.serialport.SerialPortService;
+import com.djordjem.serialmonitor.serialport.SerialPortsListener;
 
 import java.util.List;
 
-public class SerialPortComboModel extends CustomComboModel<SerialPortDTO> {
+public class SerialPortComboModel extends CustomComboModel<SerialPortDTO> implements SerialPortsListener {
 
-  /**
-   * Verifies if new COM ports are available and updates combo box with new ports.
-   */
-  void checkIfPortListChanged() {
-    if (needsReloadingPortList()) {
-      List<SerialPortDTO> ports = SerialPortService.INSTANCE.getPorts();
-      SerialPortDTO previoslySelectedPort = (SerialPortDTO) getSelectedItem();
-      this.removeAllElements();
-      for (SerialPortDTO sp : ports) {
-        this.addElement(sp);
-        if (sp.equals(previoslySelectedPort)) {
-          setSelectedItem(sp);
-        }
-      }
-    }
+  public SerialPortComboModel() {
+    SerialPortService.INSTANCE.addPortsChangedListener(this);
   }
 
-  private boolean needsReloadingPortList() {
-    List<SerialPortDTO> systemPorts = SerialPortService.INSTANCE.getPorts();
-    List<SerialPortDTO> comboBoxPorts = getAllItems();
-    return !(comboBoxPorts.containsAll(systemPorts) && comboBoxPorts.size() == systemPorts.size());
+  @Override
+  public void portListChanged(List<SerialPortDTO> serialPorts) {
+    SerialPortDTO previoslySelectedPort = (SerialPortDTO) getSelectedItem();
+    this.removeAllElements();
+    for (SerialPortDTO sp : serialPorts) {
+      this.addElement(sp);
+      if (sp.equals(previoslySelectedPort)) {
+        setSelectedItem(sp);
+      }
+    }
   }
 
 }

@@ -1,6 +1,6 @@
 package com.djordjem.serialmonitor.serialport;
 
-public interface SerialPortEventListener {
+public interface SerialPortDataListener {
 
   void onNewData(byte[] data);
 

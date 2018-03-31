@@ -4,9 +4,9 @@ import com.djordjem.serialmonitor.exc.ErrorDuringReadException;
 import com.djordjem.serialmonitor.exc.ErrorDuringWriteException;
 import com.djordjem.serialmonitor.exc.PortCouldNotBeOpenedException;
 import com.fazecast.jSerialComm.SerialPort;
-import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +14,28 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public enum SerialPortService implements SerialPortDataListener {
+public enum SerialPortService implements com.fazecast.jSerialComm.SerialPortDataListener {
   INSTANCE;
 
-  private List<SerialPortEventListener> dataListeners = new ArrayList<>();
+  private List<SerialPortDataListener> dataListeners = new ArrayList<>();
+
+  private List<SerialPortsListener> serialPortListeners = new ArrayList<>();
 
   private SerialPort openedPort;
+
+  private List<SerialPortDTO> previoslyDetectedSerialPorts = new ArrayList<>();
+
+  private Timer serialPortChecker = new Timer(1000, (event) -> {
+    List<SerialPortDTO> ports = getPorts();
+    if (!(previoslyDetectedSerialPorts.containsAll(ports) && previoslyDetectedSerialPorts.size() == ports.size())) {
+      this.previoslyDetectedSerialPorts = ports;
+      notifyListenersOnPortListChanged();
+    }
+  });
+
+  SerialPortService() {
+    serialPortChecker.start();
+  }
 
   public List<SerialPortDTO> getPorts() {
     return Stream.of(SerialPort.getCommPorts()).map(SerialPortDTO::new).collect(Collectors.toList());
@@ -55,11 +71,15 @@ public enum SerialPortService implements SerialPortDataListener {
     }
   }
 
-  public void addDataListener(SerialPortEventListener dataListener) {
+  public void addDataListener(SerialPortDataListener dataListener) {
     this.dataListeners.add(dataListener);
   }
 
-  public void removeDataListener(SerialPortEventListener dataListener) {
+  public void addPortsChangedListener(SerialPortsListener dataListener) {
+    this.serialPortListeners.add(dataListener);
+  }
+
+  public void removeDataListener(SerialPortDataListener dataListener) {
     this.dataListeners.remove(dataListener);
   }
 
@@ -113,5 +133,10 @@ public enum SerialPortService implements SerialPortDataListener {
   private void notifyListenersOnNewData(byte[] data) {
     this.dataListeners.forEach(listener -> listener.onNewData(data));
   }
+
+  private void notifyListenersOnPortListChanged() {
+    this.serialPortListeners.forEach(listener -> listener.portListChanged(previoslyDetectedSerialPorts));
+  }
+
 
 }

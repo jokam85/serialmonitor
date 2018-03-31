@@ -11,7 +11,6 @@ public class GuiUpdater {
 
   private Timer guiUpdateTimer = new Timer(250, (event) -> {
     boolean isPortOpened = SerialPortService.INSTANCE.isPortOpen();
-    serialMonitor.portsCmbModel.checkIfPortListChanged();
     serialMonitor.serialPortsCmb.setEnabled(!isPortOpened);
     serialMonitor.baudRateCmb.setEnabled(!isPortOpened);
     serialMonitor.openPortBtn.setVisible(!isPortOpened);
