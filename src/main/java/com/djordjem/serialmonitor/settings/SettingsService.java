@@ -25,7 +25,7 @@ public enum SettingsService {
     if (this.settings != null) {
       return this.settings;
     }
-    this.settings = loadFromFile().orElse(new Settings());
+    this.settings = loadFromFile().orElse(createDefaultSettings());
     return this.settings;
   }
 
@@ -38,10 +38,13 @@ public enum SettingsService {
   }
 
   private Optional<Settings> loadFromFile() {
-    try {
-      return Optional.of(objectMapper.readValue(settingsFile(), Settings.class));
-    } catch (IOException e) {
-      e.printStackTrace();
+    File sf = settingsFile();
+    if (sf.exists() && settingsFile().canRead()) {
+      try {
+        return Optional.of(objectMapper.readValue(settingsFile(), Settings.class));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
     return Optional.empty();
   }
@@ -49,4 +52,9 @@ public enum SettingsService {
   private File settingsFile() {
     return new File(USER_DIR.concat(File.separator).concat(FILE_NAME));
   }
+
+  public Settings createDefaultSettings() {
+    return new Settings();
+  }
+
 }

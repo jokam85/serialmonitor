@@ -5,6 +5,8 @@ It features a history of sent commands so they can be easily resent on doublecli
 need to retype them. It can send text as a line (press enter or click "send") or as a stream of characters 
 as you type them.
 
+**Currently tested on windows only. On Linux machines it might be needed to start this app with SUDO or it might not work at all. This issue will be resolved in the future.**
+
 [Java JRE](https://java.com/en/download/) (version 8 or greater) is required to launch this application.
 
 ![Screenshot](https://raw.githubusercontent.com/jokam85/serialmonitor/master/docs/Screenshot_1.jpg)
@@ -12,10 +14,11 @@ as you type them.
 ## Releases
 
 ## v1.2 (TODO)
-* command shortcuts
-* shortcut groups
-* lock history entries (prevent them frome being cleared)
-* menu (save log as, save history as, shortcut editing)
+* command shortcuts and shortcut groups
+* command shortcuts and shortcut groups - quick add from history
+* command shortcuts and shortcut groups editing
+* lock history entries (prevent them frome being cleared) (TODO)
+* BUGFIX do not add sequential duplicates to history
 
 ## v1.1 [download](https://github.com/jokam85/serialmonitor/releases/download/v1.1/serialmonitor.jar)
 * data sending
@@ -32,13 +35,14 @@ as you type them.
 * autoscroll
 
 ## Planned features (TODO)
+* menu (save log as, save history as, shortcut editing) (HIGH)
+* history maximum number of entries (HIGH)
+* chat mode (show sent messages)
 * display special chars
-* options
-* history maximum number of entries (FIFO)
 * display connection status
 * display errors when sending fails
 * display errors port fails to open
-* flush window content to file
+* save window content to file
 * apend to file
 * pattern recognition (highlight or show only pattern)
 * RTS, CTS...
@@ -47,7 +51,5 @@ as you type them.
 * binary data (byte separation)
 * limited and configurable console window content
 * settings menu
-* move to stream API
-* chat mode
 * sniffer (passthrough mode)
 * copy/paste

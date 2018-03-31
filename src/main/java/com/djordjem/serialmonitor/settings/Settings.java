@@ -1,18 +1,61 @@
 package com.djordjem.serialmonitor.settings;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Settings {
 
+  private Integer maxHistoryEntries = 50;
   private Integer width = 800;
   private Integer height = 600;
   private Integer posX = 100;
   private Integer posY = 100;
   private Integer baudRate = 9600;
   private String portName;
-  private Boolean autoscroll = false;
+  private Boolean autoscroll = true;
   private Boolean sendAsYouType = false;
   private String lineEnding = "NL";
   private Integer historyTextSeparatorPosition = 100;
   private History history = new History();
+  private Map<String, CommandGroup> commandGroups = new HashMap<>();
+
+  Settings() {
+    initDefaultGroups();
+  }
+
+  public Map<String, CommandGroup> getGroups() {
+    return commandGroups;
+  }
+
+  private CommandGroup newGroup(String groupName) {
+    CommandGroup group = new CommandGroup(groupName);
+    commandGroups.put(groupName, group);
+    return group;
+  }
+
+  private void initDefaultGroups() {
+
+    newGroup("HC-05 Bluetooth")
+            .addCommand("AT")
+            .addCommand("AT2")
+            .addCommand("AT3")
+            .addCommand("AT4");
+
+    newGroup("HC-12 433Mhz radio module")
+            .addCommand("AT2")
+            .addCommand("AT3")
+            .addCommand("AT4");
+
+    newGroup("HM-10 BLE Bluetooth 4.0")
+            .addCommand("AT2")
+            .addCommand("AT3")
+            .addCommand("AT4");
+
+    newGroup("SIM800L GPRS Module")
+            .addCommand("AT2")
+            .addCommand("AT3")
+            .addCommand("AT4");
+  }
 
   public Integer getWidth() {
     return width;
@@ -100,5 +143,13 @@ public class Settings {
 
   public void setHistory(History history) {
     this.history = history;
+  }
+
+  public Integer getMaxHistoryEntries() {
+    return maxHistoryEntries;
+  }
+
+  public void setMaxHistoryEntries(Integer maxHistoryEntries) {
+    this.maxHistoryEntries = maxHistoryEntries;
   }
 }

@@ -3,6 +3,7 @@ package com.djordjem.serialmonitor.gui;
 import com.djordjem.serialmonitor.serialport.SerialPortService;
 
 import javax.swing.*;
+import java.util.Arrays;
 
 public class GuiUpdater {
 
@@ -18,6 +19,8 @@ public class GuiUpdater {
     serialMonitor.textFieldLineToSend.setEnabled(isPortOpened);
     serialMonitor.buttonSend.setEnabled(isPortOpened && !serialMonitor.checkBoxSendAsType.isSelected());
     serialMonitor.historyList.setEnabled(isPortOpened);
+
+    Arrays.stream(serialMonitor.commandButtonContainerPanel.getComponents()).forEach(component -> component.setEnabled(isPortOpened));
   });
 
   GuiUpdater(SerialMonitor serialMonitor) {
