@@ -11,7 +11,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.List;
 import java.util.stream.IntStream;
 
 import static com.djordjem.serialmonitor.constants.Constants.POSSIBLE_BAUDRATES;
@@ -22,7 +21,7 @@ public class SerialMonitor extends JDialog implements SerialPortEventListener {
   // Models
   private Settings settings;
   private CustomListModel<String> historyListModel;
-  private CustomComboModel<SerialPortDTO> portsCmbModel;
+  SerialPortComboModel portsCmbModel;
   CustomComboModel<CommandGroup> commandGroupsComboBoxModel;
 
   JPanel contentPane;
@@ -50,7 +49,7 @@ public class SerialMonitor extends JDialog implements SerialPortEventListener {
     super(null, java.awt.Dialog.ModalityType.TOOLKIT_MODAL);
     settings = SETTINGS.getSettings();
 
-    portsCmbModel = new CustomComboModel<>();
+    portsCmbModel = new SerialPortComboModel();
     serialPortsCmb.setModel(portsCmbModel);
 
     historyListModel = new CustomListModel<>();
@@ -62,15 +61,12 @@ public class SerialMonitor extends JDialog implements SerialPortEventListener {
     setContentPane(contentPane);
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     setTitle("Serial monitor");
-    initPorts();
     initRates();
     initListeners();
     applySettings();
 
     guiUpdater.start();
     SerialPortService.INSTANCE.addDataListener(this);
-
-    renderShortcutButtons();
   }
 
   @Override
@@ -98,29 +94,6 @@ public class SerialMonitor extends JDialog implements SerialPortEventListener {
     SerialPortService.INSTANCE.removeDataListener(this);
     dispose();
     saveSettings();
-  }
-
-  /**
-   * Verifies if new COM ports are available and updates combo box with new ports.
-   */
-  void initPorts() {
-    if (needsReloadingPortList()) {
-      List<SerialPortDTO> ports = SerialPortService.INSTANCE.getPorts();
-      SerialPortDTO previoslySelectedPort = (SerialPortDTO) serialPortsCmb.getSelectedItem();
-      serialPortsCmb.removeAllItems();
-      for (SerialPortDTO sp : ports) {
-        serialPortsCmb.addItem(sp);
-        if (sp.equals(previoslySelectedPort)) {
-          serialPortsCmb.setSelectedItem(sp);
-        }
-      }
-    }
-  }
-
-  private boolean needsReloadingPortList() {
-    List<SerialPortDTO> systemPorts = SerialPortService.INSTANCE.getPorts();
-    List<SerialPortDTO> comboBoxPorts = portsCmbModel.getAllItems();
-    return !(comboBoxPorts.containsAll(systemPorts) && comboBoxPorts.size() == systemPorts.size());
   }
 
   private void initRates() {
