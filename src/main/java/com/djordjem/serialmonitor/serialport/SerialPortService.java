@@ -10,7 +10,6 @@ import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -38,14 +37,6 @@ public enum SerialPortService implements com.fazecast.jSerialComm.SerialPortData
 
   public List<SerialPortDTO> getPorts() {
     return Stream.of(SerialPort.getCommPorts()).map(SerialPortDTO::new).collect(Collectors.toList());
-  }
-
-  public SerialPortDTO getPort(String systemName) {
-    Optional<SerialPortDTO> port = Stream.of(SerialPort.getCommPorts())
-            .map(SerialPortDTO::new)
-            .filter(serialPortDTO -> serialPortDTO.getSystemPortName().equals(systemName))
-            .findFirst();
-    return port.orElse(null);
   }
 
   public void openPort(String sysPortName, int baudRate) {
@@ -136,6 +127,5 @@ public enum SerialPortService implements com.fazecast.jSerialComm.SerialPortData
   private void notifyListenersOnPortListChanged() {
     this.serialPortListeners.forEach(listener -> listener.portListChanged(previoslyDetectedSerialPorts));
   }
-
 
 }

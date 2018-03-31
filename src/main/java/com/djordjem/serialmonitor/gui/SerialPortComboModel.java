@@ -3,10 +3,13 @@ package com.djordjem.serialmonitor.gui;
 import com.djordjem.serialmonitor.serialport.SerialPortDTO;
 import com.djordjem.serialmonitor.serialport.SerialPortService;
 import com.djordjem.serialmonitor.serialport.SerialPortsListener;
+import com.djordjem.serialmonitor.settings.SettingsService;
 
 import java.util.List;
 
 public class SerialPortComboModel extends CustomComboModel<SerialPortDTO> implements SerialPortsListener {
+
+  private boolean firstInitialisationDone = false;
 
   public SerialPortComboModel() {
     SerialPortService.INSTANCE.addPortsChangedListener(this);
@@ -21,7 +24,11 @@ public class SerialPortComboModel extends CustomComboModel<SerialPortDTO> implem
       if (sp.equals(previoslySelectedPort)) {
         setSelectedItem(sp);
       }
+      if (!firstInitialisationDone && sp.getSystemPortName().equals(SettingsService.SETTINGS.getSettings().getPortName())) {
+        setSelectedItem(sp);
+      }
     }
+    firstInitialisationDone = true;
   }
 
 }

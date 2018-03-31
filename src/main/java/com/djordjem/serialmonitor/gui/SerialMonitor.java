@@ -22,7 +22,7 @@ public class SerialMonitor extends JDialog implements SerialPortDataListener {
   private Settings settings;
   private CustomListModel<String> historyListModel;
   SerialPortComboModel portsCmbModel;
-  CustomComboModel<CommandGroup> commandGroupsComboBoxModel;
+  CommandGroupsComboModel commandGroupsComboBoxModel;
 
   JPanel contentPane;
   JComboBox<SerialPortDTO> serialPortsCmb;
@@ -55,7 +55,7 @@ public class SerialMonitor extends JDialog implements SerialPortDataListener {
     historyListModel = new CustomListModel<>();
     historyList.setModel(historyListModel);
 
-    commandGroupsComboBoxModel = new CustomComboModel<>();
+    commandGroupsComboBoxModel = new CommandGroupsComboModel();
     commandGroupsComboBox.setModel(commandGroupsComboBoxModel);
 
     setContentPane(contentPane);
@@ -172,15 +172,12 @@ public class SerialMonitor extends JDialog implements SerialPortDataListener {
   }
 
   private void applySettings() {
-    String portName = settings.getPortName();
-    if (portName != null) {
-      serialPortsCmb.setSelectedItem(SerialPortService.INSTANCE.getPort(settings.getPortName()));
-    }
     settings.getHistory().forEach(historyListModel::addElement);
     settings.getGroups().forEach((name, group) -> commandGroupsComboBoxModel.addElement(group));
     checkBoxAutoscroll.setSelected(settings.getAutoscroll());
     checkBoxSendAsType.setSelected(settings.getSendAsYouType());
     comboBoxLineEnding.setSelectedItem(settings.getLineEnding());
+    commandGroupsComboBoxModel.setSelectedGroupByName(settings.getCommandGroupName());
     historyTextSplit.setDividerLocation(settings.getHistoryTextSeparatorPosition());
   }
 
@@ -209,6 +206,10 @@ public class SerialMonitor extends JDialog implements SerialPortDataListener {
     // Groups
     settings.getGroups().clear();
     commandGroupsComboBoxModel.getAllItems().forEach(settings::addGroup);
+    CommandGroup selectedGroup = (CommandGroup) commandGroupsComboBoxModel.getSelectedItem();
+    if (selectedGroup != null) {
+      settings.setCommandGroupName(selectedGroup.getName());
+    }
 
     SETTINGS.flushToFile();
   }

@@ -12,6 +12,7 @@ public class Settings {
   private Integer posY = 100;
   private Integer baudRate = 9600;
   private String portName;
+  private String commandGroupName;
   private Boolean autoscroll = true;
   private Boolean sendAsYouType = false;
   private String lineEnding = "NL";
@@ -155,5 +156,13 @@ public class Settings {
 
   public void setMaxHistoryEntries(Integer maxHistoryEntries) {
     this.maxHistoryEntries = maxHistoryEntries;
+  }
+
+  public String getCommandGroupName() {
+    return commandGroupName;
+  }
+
+  public void setCommandGroupName(String commandGroupName) {
+    this.commandGroupName = commandGroupName;
   }
 }
