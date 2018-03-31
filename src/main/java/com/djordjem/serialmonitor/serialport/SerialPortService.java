@@ -25,15 +25,14 @@ public enum SerialPortService implements com.fazecast.jSerialComm.SerialPortData
 
   private List<SerialPortDTO> previoslyDetectedSerialPorts = new ArrayList<>();
 
-  private Timer serialPortChecker = new Timer(1000, (event) -> {
-    List<SerialPortDTO> ports = getPorts();
-    if (!(previoslyDetectedSerialPorts.containsAll(ports) && previoslyDetectedSerialPorts.size() == ports.size())) {
-      this.previoslyDetectedSerialPorts = ports;
-      notifyListenersOnPortListChanged();
-    }
-  });
-
   SerialPortService() {
+    Timer serialPortChecker = new Timer(1000, (event) -> {
+      List<SerialPortDTO> ports = getPorts();
+      if (!(previoslyDetectedSerialPorts.containsAll(ports) && previoslyDetectedSerialPorts.size() == ports.size())) {
+        this.previoslyDetectedSerialPorts = ports;
+        notifyListenersOnPortListChanged();
+      }
+    });
     serialPortChecker.start();
   }
 
