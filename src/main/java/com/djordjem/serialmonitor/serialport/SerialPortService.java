@@ -69,7 +69,10 @@ public enum SerialPortService implements SerialPortDataListener {
 
   public void sendLine(String line, String newLineSeparator) {
     try {
-      openedPort.getOutputStream().write(line.concat(newLineSeparator).getBytes());
+      openedPort.getOutputStream().write(line.getBytes());
+      if (newLineSeparator != null) {
+        openedPort.getOutputStream().write(newLineSeparator.getBytes());
+      }
     } catch (IOException e1) {
       closePort();
       throw new ErrorDuringWriteException();

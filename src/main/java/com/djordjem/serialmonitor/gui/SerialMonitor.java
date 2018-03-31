@@ -7,7 +7,10 @@ import com.djordjem.serialmonitor.settings.CommandGroup;
 import com.djordjem.serialmonitor.settings.Settings;
 
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -20,7 +23,7 @@ public class SerialMonitor extends JDialog implements SerialPortEventListener {
   private Settings settings;
   private CustomListModel<String> historyListModel;
   private CustomComboModel<SerialPortDTO> portsCmbModel;
-  private CustomComboModel<CommandGroup> commandGroupsComboBoxModel;
+  CustomComboModel<CommandGroup> commandGroupsComboBoxModel;
 
   JPanel contentPane;
   JComboBox<SerialPortDTO> serialPortsCmb;
@@ -152,15 +155,8 @@ public class SerialMonitor extends JDialog implements SerialPortEventListener {
         }
       }
     });
-    historyList.addMouseListener(new MouseAdapter() {
-      public void mouseClicked(MouseEvent evt) {
-        JList list = (JList) evt.getSource();
-        if (evt.getClickCount() == 2) {
-          int index = list.locationToIndex(evt.getPoint());
-          sendLine(historyListModel.get(index), false);
-        }
-      }
-    });
+    historyList.addMouseListener(new HistoryListClickListener(this));
+
     commandGroupsComboBox.addActionListener(event -> renderShortcutButtons());
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
@@ -171,12 +167,12 @@ public class SerialMonitor extends JDialog implements SerialPortEventListener {
 
   private void sendEnteredText() {
     String text = textFieldLineToSend.getText();
-    sendLine(text, true);
+    sendLine(text, true, true);
     clearSendField();
   }
 
-  private void sendLine(String line, boolean addToHistory) {
-    SerialPortService.INSTANCE.sendLine(line, getNewLine());
+  void sendLine(String line, boolean includeLineSeparator, boolean addToHistory) {
+    SerialPortService.INSTANCE.sendLine(line, includeLineSeparator ? getNewLine() : null);
     if (addToHistory) {
       historyListModel.addAtTop(line, true, settings.getMaxHistoryEntries());
     }
@@ -240,15 +236,16 @@ public class SerialMonitor extends JDialog implements SerialPortEventListener {
     SETTINGS.flushToFile();
   }
 
-  private void renderShortcutButtons() {
+  void renderShortcutButtons() {
     CommandGroup cg = (CommandGroup) commandGroupsComboBoxModel.getSelectedItem();
     commandButtonContainerPanel.removeAll();
     if (cg != null) {
+      boolean portOpen = SerialPortService.INSTANCE.isPortOpen();
       cg.getCommands().forEach(cmd -> {
         JButton cmdBtn = new JButton(cmd);
-        cmdBtn.setEnabled(false);
+        cmdBtn.setEnabled(portOpen);
         commandButtonContainerPanel.add(cmdBtn);
-        cmdBtn.addActionListener(e -> sendLine(cmd, true));
+        cmdBtn.addActionListener(e -> sendLine(cmd, true, true));
       });
     }
     commandButtonContainerPanel.updateUI();

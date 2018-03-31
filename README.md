@@ -16,7 +16,7 @@ as you type them.
 ## v1.2 (TODO)
 * command shortcuts and shortcut groups
 * command shortcuts and shortcut groups - quick add from history
-* command shortcuts and shortcut groups editing
+* command shortcuts and shortcut groups editing (TODO)
 * lock history entries (prevent them frome being cleared) (TODO)
 * BUGFIX do not add sequential duplicates to history
 
