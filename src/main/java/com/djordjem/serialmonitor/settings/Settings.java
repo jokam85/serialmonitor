@@ -27,31 +27,35 @@ public class Settings {
     return commandGroups;
   }
 
-  private CommandGroup newGroup(String groupName) {
+  public void addGroup(CommandGroup group) {
+    commandGroups.put(group.getName(), group);
+  }
+
+  private CommandGroup createGroup(String groupName) {
     CommandGroup group = new CommandGroup(groupName);
-    commandGroups.put(groupName, group);
+    addGroup(group);
     return group;
   }
 
   private void initDefaultGroups() {
 
-    newGroup("HC-05 Bluetooth")
+    createGroup("HC-05 Bluetooth")
             .addCommand("AT")
             .addCommand("AT2")
             .addCommand("AT3")
             .addCommand("AT4");
 
-    newGroup("HC-12 433Mhz radio module")
+    createGroup("HC-12 433Mhz radio module")
             .addCommand("AT2")
             .addCommand("AT3")
             .addCommand("AT4");
 
-    newGroup("HM-10 BLE Bluetooth 4.0")
+    createGroup("HM-10 BLE Bluetooth 4.0")
             .addCommand("AT2")
             .addCommand("AT3")
             .addCommand("AT4");
 
-    newGroup("SIM800L GPRS Module")
+    createGroup("SIM800L GPRS Module")
             .addCommand("AT2")
             .addCommand("AT3")
             .addCommand("AT4");

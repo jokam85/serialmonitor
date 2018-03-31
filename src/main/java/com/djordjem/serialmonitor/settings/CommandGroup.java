@@ -13,7 +13,7 @@ public class CommandGroup {
     super();
   }
 
-  CommandGroup(String name) {
+  public CommandGroup(String name) {
     this.name = name;
   }
 

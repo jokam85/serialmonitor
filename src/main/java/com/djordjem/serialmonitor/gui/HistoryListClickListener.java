@@ -1,6 +1,7 @@
 package com.djordjem.serialmonitor.gui;
 
 import com.djordjem.serialmonitor.serialport.SerialPortService;
+import com.djordjem.serialmonitor.settings.CommandGroup;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -58,6 +59,7 @@ public class HistoryListClickListener extends MouseAdapter {
     private JMenuItem editBeforeSendMenuItem = new JMenuItem("Edit before send");
     private JMenuItem sendWithoutLineSepMenuItem = new JMenuItem("Send without line separator");
     private JMenu saveAsShortcut = new JMenu("Save as shortcut");
+    private JMenuItem newGroupMenuItem = new JMenuItem("New shortcut group...");
 
     HistoryContextMenu(SerialMonitor serialMonitor, String command) {
       this.serialMonitor = serialMonitor;
@@ -90,6 +92,8 @@ public class HistoryListClickListener extends MouseAdapter {
         });
       });
       saveAsShortcut.add(new JSeparator());
+      saveAsShortcut.add(newGroupMenuItem);
+      newGroupMenuItem.addActionListener(e -> addCommandToNewGroup());
     }
 
     private void setEnabledStateForMenuItems() {
@@ -105,6 +109,14 @@ public class HistoryListClickListener extends MouseAdapter {
         serialMonitor.textFieldLineToSend.setText(command);
         serialMonitor.textFieldLineToSend.grabFocus();
       });
+    }
+
+    private void addCommandToNewGroup() {
+      String newGroupName = JOptionPane.showInputDialog(this.serialMonitor, "Please input a value");
+      CommandGroup newGroup = new CommandGroup(newGroupName);
+      newGroup.addCommand(command);
+      serialMonitor.commandGroupsComboBoxModel.addElement(newGroup);
+      serialMonitor.commandGroupsComboBoxModel.setSelectedItem(newGroup);
     }
   }
 }

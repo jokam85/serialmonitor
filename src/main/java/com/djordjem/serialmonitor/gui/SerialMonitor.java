@@ -140,7 +140,7 @@ public class SerialMonitor extends JDialog implements SerialPortEventListener {
       @Override
       public void keyPressed(KeyEvent e) {
         if (checkBoxSendAsType.isSelected()) {
-          sendChar(e.getKeyChar());
+          SerialPortService.INSTANCE.sendChar(e.getKeyChar());
         } else {
           if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             buttonSend.doClick();
@@ -166,8 +166,7 @@ public class SerialMonitor extends JDialog implements SerialPortEventListener {
   }
 
   private void sendEnteredText() {
-    String text = textFieldLineToSend.getText();
-    sendLine(text, true, true);
+    sendLine(textFieldLineToSend.getText(), true, true);
     clearSendField();
   }
 
@@ -176,10 +175,6 @@ public class SerialMonitor extends JDialog implements SerialPortEventListener {
     if (addToHistory) {
       historyListModel.addAtTop(line, true, settings.getMaxHistoryEntries());
     }
-  }
-
-  private void sendChar(char c) {
-    SerialPortService.INSTANCE.sendChar(c);
   }
 
   private void clearSendField() {
@@ -226,13 +221,22 @@ public class SerialMonitor extends JDialog implements SerialPortEventListener {
     settings.setSendAsYouType(checkBoxSendAsType.isSelected());
     settings.setLineEnding((String) comboBoxLineEnding.getSelectedItem());
     settings.setHistoryTextSeparatorPosition(historyTextSplit.getDividerLocation());
+
+    // Copy history to settings object
     int historySize = historyListModel.getSize();
     settings.getHistory().clear();
     IntStream.range(0, historySize).forEach(i -> settings.getHistory().add(historyListModel.getElementAt(i)));
+
+    // Selected port
     final SerialPortDTO selectedPort = (SerialPortDTO) serialPortsCmb.getSelectedItem();
     if (selectedPort != null) {
       settings.setPortName(selectedPort.getSystemPortName());
     }
+
+    // Groups
+    settings.getGroups().clear();
+    commandGroupsComboBoxModel.getAllItems().forEach(settings::addGroup);
+
     SETTINGS.flushToFile();
   }
 
