@@ -1,5 +1,6 @@
-package com.djordjem.serialmonitor.gui;
+package com.djordjem.serialmonitor.gui.maindlg;
 
+import com.djordjem.serialmonitor.gui.models.CustomComboModel;
 import com.djordjem.serialmonitor.serialport.SerialPortDTO;
 import com.djordjem.serialmonitor.serialport.SerialPortService;
 import com.djordjem.serialmonitor.serialport.SerialPortsListener;

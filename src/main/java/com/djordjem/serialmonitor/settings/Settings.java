@@ -50,7 +50,12 @@ public class Settings {
   }
 
   Settings() {
-    createDefaultGroups().forEach(this::addGroup);
+    setNewCommandGroups(createDefaultGroups());
+  }
+
+  public void setNewCommandGroups(List<CommandGroup> newCommandGroups) {
+    commandGroups.clear();
+    newCommandGroups.forEach(this::addGroup);
   }
 
   public Map<String, CommandGroup> getGroups() {

@@ -1,6 +1,6 @@
-package com.djordjem.serialmonitor.gui.shortcut;
+package com.djordjem.serialmonitor.gui.commanddlg;
 
-import com.djordjem.serialmonitor.gui.CustomListModel;
+import com.djordjem.serialmonitor.gui.models.CustomListModel;
 import com.djordjem.serialmonitor.gui.utils.DialogUtils;
 import com.djordjem.serialmonitor.settings.CommandGroup;
 

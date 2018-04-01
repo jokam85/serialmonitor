@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.djordjem.serialmonitor.gui.SerialMonitor">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.djordjem.serialmonitor.gui.maindlg.MainDialog">
   <grid id="cbd77" binding="contentPane" layout-manager="GridLayoutManager" row-count="5" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="10" left="10" bottom="10" right="10"/>
     <constraints>
@@ -16,7 +16,7 @@
           <model/>
         </properties>
       </component>
-      <component id="4ea6c" class="javax.swing.JTextField" binding="textFieldLineToSend">
+      <component id="4ea6c" class="javax.swing.JTextField" binding="sendTextField">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
@@ -26,7 +26,7 @@
           <text value=""/>
         </properties>
       </component>
-      <component id="5676" class="javax.swing.JButton" binding="buttonSend">
+      <component id="5676" class="javax.swing.JButton" binding="sendButton">
         <constraints>
           <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -76,7 +76,7 @@
               <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
-          <component id="97d53" class="javax.swing.JButton" binding="clearHistorybutton">
+          <component id="97d53" class="javax.swing.JButton" binding="clearHistoryBtn">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -95,7 +95,7 @@
           <text value="Send as you type"/>
         </properties>
       </component>
-      <component id="8526d" class="javax.swing.JButton" binding="clearButton" default-binding="true">
+      <component id="8526d" class="javax.swing.JButton" binding="clearBtn" default-binding="true">
         <constraints>
           <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -119,7 +119,7 @@
               <text value="Open"/>
             </properties>
           </component>
-          <component id="e0062" class="javax.swing.JButton" binding="closeButton" default-binding="true">
+          <component id="e0062" class="javax.swing.JButton" binding="closeBtn" default-binding="true">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -215,15 +215,15 @@
             <border type="none"/>
             <children/>
           </grid>
-          <component id="8db0" class="javax.swing.JButton" binding="editShortcutsButton">
+          <component id="8db0" class="javax.swing.JButton" binding="editCommandBtn">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <iconTextGap value="0"/>
               <margin top="2" left="5" bottom="2" right="5"/>
-              <text value=" Edit shortcuts"/>
-              <toolTipText value=" Edit shortcuts"/>
+              <text value=" Edit commands"/>
+              <toolTipText value=" Edit commands"/>
             </properties>
           </component>
         </children>

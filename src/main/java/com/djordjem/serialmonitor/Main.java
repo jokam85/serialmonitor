@@ -1,6 +1,6 @@
 package com.djordjem.serialmonitor;
 
-import com.djordjem.serialmonitor.gui.SerialMonitor;
+import com.djordjem.serialmonitor.gui.maindlg.MainDialog;
 import com.djordjem.serialmonitor.settings.Settings;
 
 import javax.swing.*;
@@ -11,7 +11,7 @@ public class Main {
 
   public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-    SerialMonitor dialog = new SerialMonitor();
+    MainDialog dialog = new MainDialog();
     final Settings settings = SETTINGS.getSettings();
     dialog.pack();
     dialog.setSize(settings.getWidth(), settings.getHeight());

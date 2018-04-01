@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.djordjem.serialmonitor.gui.shortcut.ShortcutsDialog">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.djordjem.serialmonitor.gui.commanddlg.CommandsEditDialog">
   <grid id="cbd77" binding="contentPane" layout-manager="GridLayoutManager" row-count="3" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="10" left="10" bottom="10" right="10"/>
     <constraints>
@@ -84,7 +84,7 @@
                   <selectionMode value="0"/>
                 </properties>
               </component>
-              <component id="394b3" class="javax.swing.JList" binding="shortcutList">
+              <component id="394b3" class="javax.swing.JList" binding="commandList">
                 <constraints>
                   <splitpane position="right"/>
                 </constraints>
@@ -96,20 +96,20 @@
           </splitpane>
         </children>
       </grid>
-      <component id="9a368" class="javax.swing.JButton" binding="addShortcutGroupButton" default-binding="true">
+      <component id="9a368" class="javax.swing.JButton" binding="addCommandGroupButton" default-binding="true">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Add shortcut group"/>
+          <text value="Add command group"/>
         </properties>
       </component>
-      <component id="6cb09" class="javax.swing.JButton" binding="addShortcutButton" default-binding="true">
+      <component id="6cb09" class="javax.swing.JButton" binding="addCommandButton" default-binding="true">
         <constraints>
           <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Add shortcut"/>
+          <text value="Add command"/>
         </properties>
       </component>
       <hspacer id="d5ea5">

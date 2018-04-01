@@ -1,6 +1,6 @@
-package com.djordjem.serialmonitor.gui.shortcut;
+package com.djordjem.serialmonitor.gui.commanddlg;
 
-import com.djordjem.serialmonitor.gui.CustomListModel;
+import com.djordjem.serialmonitor.gui.models.CustomListModel;
 import com.djordjem.serialmonitor.gui.utils.DialogUtils;
 import com.djordjem.serialmonitor.settings.CommandGroup;
 import com.djordjem.serialmonitor.settings.Settings;
@@ -12,17 +12,17 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
 
-public class ShortcutsDialog extends JDialog {
+public class CommandsEditDialog extends JDialog {
 
   private Timer t;
 
   private JPanel contentPane;
   private JButton buttonOK;
   private JButton buttonCancel;
-  private JButton addShortcutGroupButton;
-  private JButton addShortcutButton;
+  private JButton addCommandGroupButton;
+  private JButton addCommandButton;
   private JList<CommandGroup> groupList;
-  private JList<String> shortcutList;
+  private JList<String> commandList;
   private JButton restoreDefaultsbutton;
 
   private CustomListModel<CommandGroup> groupListModel = new CustomListModel<>();
@@ -30,7 +30,7 @@ public class ShortcutsDialog extends JDialog {
 
   private boolean ok = false;
 
-  public ShortcutsDialog(Dialog owner, List<CommandGroup> commandGroups) {
+  public CommandsEditDialog(Dialog owner, List<CommandGroup> commandGroups) {
     super(owner);
     initDialog(owner);
     initListeners();
@@ -38,10 +38,14 @@ public class ShortcutsDialog extends JDialog {
     initGroupList(commandGroups);
   }
 
+  public boolean isOk() {
+    return ok;
+  }
+
   private void initDialog(Dialog owner) {
     setContentPane(contentPane);
     setModal(true);
-    setTitle("Edit shortcuts");
+    setTitle("Edit commands");
     getRootPane().setDefaultButton(buttonOK);
     setSize(800, 500);
     setLocation(owner.getX() + (owner.getSize().width - getSize().width) / 2, owner.getY() + 60);
@@ -51,8 +55,8 @@ public class ShortcutsDialog extends JDialog {
   private void initListeners() {
     buttonOK.addActionListener(e -> onOK());
     buttonCancel.addActionListener(e -> onCancel());
-    addShortcutGroupButton.addActionListener(e -> addGroup());
-    addShortcutButton.addActionListener(e -> addShortcut());
+    addCommandGroupButton.addActionListener(e -> addGroup());
+    addCommandButton.addActionListener(e -> addCommand());
     restoreDefaultsbutton.addActionListener(e -> restoreDefaults());
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
@@ -62,9 +66,7 @@ public class ShortcutsDialog extends JDialog {
   }
 
   private void initGuiUpdater() {
-    t = new Timer(200, (e) -> {
-      addShortcutButton.setEnabled(groupList.getSelectedValue() != null);
-    });
+    t = new Timer(200, (e) -> updateGUIState());
     t.start();
   }
 
@@ -75,11 +77,11 @@ public class ShortcutsDialog extends JDialog {
     groupList.addListSelectionListener(e -> {
       if (!e.getValueIsAdjusting()) {
         commandModel = new CustomListModel<>();
-        shortcutList.setModel(commandModel);
+        commandList.setModel(commandModel);
         CommandGroup cg = groupList.getSelectedValue();
         if (cg != null) {
-          shortcutList.removeMouseListener(shortcutList.getMouseListeners()[0]);
-          shortcutList.addMouseListener(new CommandListClickListener(cg, shortcutList));
+          commandList.removeMouseListener(commandList.getMouseListeners()[0]);
+          commandList.addMouseListener(new CommandListClickListener(cg, commandList));
           cg.getCommands().forEach(c -> commandModel.insertElementAt(c, commandModel.getSize()));
         }
       }
@@ -87,12 +89,12 @@ public class ShortcutsDialog extends JDialog {
   }
 
   private void addGroup() {
-    String newGroupName = JOptionPane.showInputDialog(this, "Shortcut group name");
+    String newGroupName = DialogUtils.textInput(this, "Command group name");
     CommandGroup newGroup = new CommandGroup(newGroupName);
     groupListModel.add(groupListModel.getSize(), newGroup);
   }
 
-  private void addShortcut() {
+  private void addCommand() {
     CommandGroup cg = groupList.getSelectedValue();
     if (cg != null) {
       String command = DialogUtils.textInput(this, "Command");
@@ -111,11 +113,8 @@ public class ShortcutsDialog extends JDialog {
   }
 
   private void onOK() {
-    // add your code here
     ok = true;
-    Settings settings = SettingsService.SETTINGS.getSettings();
-    settings.getGroups().clear();
-    groupListModel.getAllItems().forEach(settings::addGroup);
+    saveDataToSettings();
     dispose();
   }
 
@@ -124,7 +123,11 @@ public class ShortcutsDialog extends JDialog {
     dispose();
   }
 
-  public boolean isOk() {
-    return ok;
+  private void updateGUIState() {
+    addCommandButton.setEnabled(groupList.getSelectedValue() != null);
+  }
+
+  private void saveDataToSettings() {
+    SettingsService.SETTINGS.getSettings().setNewCommandGroups(groupListModel.getAllItems());
   }
 }

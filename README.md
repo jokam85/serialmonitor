@@ -14,10 +14,11 @@ due to permissions required for accessing serial ports.**
 
 ## Releases
 
-## v1.2
-* command shortcuts and shortcut groups
-* command shortcuts and shortcut groups - quick add from history
-* command shortcuts and shortcut groups editing
+## v1.2 [download](https://github.com/jokam85/serialmonitor/releases/download/v1.2/serialmonitor.jar)
+* commands and command groups edit (TODO)
+* commands and command groups
+* commands and command groups - quick add from history
+* commands and command groups editing
 * BUGFIX do not add sequential duplicates to history
 
 ## v1.1 [download](https://github.com/jokam85/serialmonitor/releases/download/v1.1/serialmonitor.jar)
@@ -35,8 +36,7 @@ due to permissions required for accessing serial ports.**
 * autoscroll
 
 ## Planned features (TODO)
-* menu (save log as, save history as, shortcut editing) (HIGH)
-* history maximum number of entries (HIGH)
+* save log as, save history as
 * chat mode (show sent messages)
 * display special chars
 * display connection status

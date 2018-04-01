@@ -1,4 +1,4 @@
-package com.djordjem.serialmonitor.gui;
+package com.djordjem.serialmonitor.gui.models;
 
 import javax.swing.*;
 import java.util.ArrayList;

@@ -1,6 +1,7 @@
-package com.djordjem.serialmonitor.gui;
+package com.djordjem.serialmonitor.gui.maindlg;
 
-import com.djordjem.serialmonitor.gui.shortcut.ShortcutsDialog;
+import com.djordjem.serialmonitor.gui.commanddlg.CommandsEditDialog;
+import com.djordjem.serialmonitor.gui.models.CustomListModel;
 import com.djordjem.serialmonitor.serialport.SerialPortDTO;
 import com.djordjem.serialmonitor.serialport.SerialPortDataListener;
 import com.djordjem.serialmonitor.serialport.SerialPortService;
@@ -17,7 +18,7 @@ import java.util.stream.IntStream;
 import static com.djordjem.serialmonitor.constants.Constants.POSSIBLE_BAUDRATES;
 import static com.djordjem.serialmonitor.settings.SettingsService.SETTINGS;
 
-public class SerialMonitor extends JDialog implements SerialPortDataListener {
+public class MainDialog extends JDialog implements SerialPortDataListener {
 
   // Models
   private Settings settings;
@@ -29,26 +30,29 @@ public class SerialMonitor extends JDialog implements SerialPortDataListener {
   JComboBox<SerialPortDTO> serialPortsCmb;
   JButton openPortBtn;
   JComboBox<Integer> baudRateCmb;
-  JButton closeButton;
-  JButton clearButton;
+  JButton closeBtn;
+  JButton clearBtn;
   JTextArea serialText;
   JCheckBox checkBoxAutoscroll;
-  JTextField textFieldLineToSend;
-  JButton buttonSend;
+  JTextField sendTextField;
+  JButton sendButton;
   JComboBox comboBoxLineEnding;
   JCheckBox checkBoxSendAsType;
   JPanel jPanelFooter;
   JList<String> historyList;
   JSplitPane historyTextSplit;
-  JButton clearHistorybutton;
+  JButton clearHistoryBtn;
   JComboBox<CommandGroup> commandGroupsComboBox;
   JPanel commandButtonContainerPanel;
-  JButton editShortcutsButton;
+  JButton editCommandBtn;
 
-  private GuiUpdater guiUpdater = new GuiUpdater(this);
+  private final GuiUpdater guiUpdater = new GuiUpdater(this);
 
-  public SerialMonitor() {
+  public MainDialog() {
     super(null, java.awt.Dialog.ModalityType.TOOLKIT_MODAL);
+
+    guiUpdater.start();
+
     settings = SETTINGS.getSettings();
 
     portsCmbModel = new SerialPortComboModel();
@@ -67,7 +71,6 @@ public class SerialMonitor extends JDialog implements SerialPortDataListener {
     initListeners();
     applySettings();
 
-    guiUpdater.start();
     SerialPortService.INSTANCE.addDataListener(this);
   }
 
@@ -107,19 +110,19 @@ public class SerialMonitor extends JDialog implements SerialPortDataListener {
 
   private void initListeners() {
     openPortBtn.addActionListener(e -> openPort());
-    closeButton.addActionListener(e -> SerialPortService.INSTANCE.closePort());
-    clearButton.addActionListener(e -> serialText.setText(""));
-    buttonSend.addActionListener(e -> sendEnteredText());
-    clearHistorybutton.addActionListener(e -> historyListModel.clear());
-    editShortcutsButton.addActionListener(e -> openShortcutsDialog());
-    textFieldLineToSend.addKeyListener(new KeyAdapter() {
+    closeBtn.addActionListener(e -> SerialPortService.INSTANCE.closePort());
+    clearBtn.addActionListener(e -> clearTextField());
+    sendButton.addActionListener(e -> sendEnteredText());
+    clearHistoryBtn.addActionListener(e -> historyListModel.clear());
+    editCommandBtn.addActionListener(e -> openCommandDialog());
+    sendTextField.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
         if (checkBoxSendAsType.isSelected()) {
           SerialPortService.INSTANCE.sendChar(e.getKeyChar());
         } else {
           if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            buttonSend.doClick();
+            sendEnteredText();
           }
         }
       }
@@ -133,7 +136,7 @@ public class SerialMonitor extends JDialog implements SerialPortDataListener {
     });
     historyList.addMouseListener(new HistoryListClickListener(this));
 
-    commandGroupsComboBox.addActionListener(event -> renderShortcutButtons());
+    commandGroupsComboBox.addActionListener(event -> renderCommandButtons());
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
         onApplicationExit();
@@ -142,7 +145,7 @@ public class SerialMonitor extends JDialog implements SerialPortDataListener {
   }
 
   private void sendEnteredText() {
-    sendLine(textFieldLineToSend.getText(), true, true);
+    sendLine(sendTextField.getText(), true, true);
     clearSendField();
   }
 
@@ -154,7 +157,11 @@ public class SerialMonitor extends JDialog implements SerialPortDataListener {
   }
 
   private void clearSendField() {
-    textFieldLineToSend.setText("");
+    sendTextField.setText("");
+  }
+
+  private void clearTextField() {
+    serialText.setText("");
   }
 
   private String getNewLine() {
@@ -179,19 +186,10 @@ public class SerialMonitor extends JDialog implements SerialPortDataListener {
     checkBoxAutoscroll.setSelected(settings.getAutoscroll());
     checkBoxSendAsType.setSelected(settings.getSendAsYouType());
     comboBoxLineEnding.setSelectedItem(settings.getLineEnding());
-    commandGroupsComboBoxModel.setSelectedGroupByName(settings.getCommandGroupName());
     historyTextSplit.setDividerLocation(settings.getHistoryTextSeparatorPosition());
 
     reloadGroupsFromSettings();
-  }
-
-  private void reloadGroupsFromSettings() {
-    CommandGroup prevSelItem = (CommandGroup) commandGroupsComboBoxModel.getSelectedItem();
-    commandGroupsComboBoxModel.removeAllElements();
-    settings.getGroups().forEach((name, group) -> commandGroupsComboBoxModel.addElement(group));
-    if (prevSelItem != null && commandGroupsComboBoxModel.getIndexOf(prevSelItem) > -1) {
-      commandGroupsComboBoxModel.setSelectedItem(prevSelItem);
-    }
+    commandGroupsComboBoxModel.setSelectedGroupByName(settings.getCommandGroupName());
   }
 
   private void saveSettings() {
@@ -217,17 +215,25 @@ public class SerialMonitor extends JDialog implements SerialPortDataListener {
     }
 
     // Groups
-    settings.getGroups().clear();
-    commandGroupsComboBoxModel.getAllItems().forEach(settings::addGroup);
     CommandGroup selectedGroup = (CommandGroup) commandGroupsComboBoxModel.getSelectedItem();
     if (selectedGroup != null) {
       settings.setCommandGroupName(selectedGroup.getName());
     }
-
+    settings.setNewCommandGroups(commandGroupsComboBoxModel.getAllItems());
     SETTINGS.flushToFile();
   }
 
-  void renderShortcutButtons() {
+  private void reloadGroupsFromSettings() {
+    CommandGroup prevSelItem = (CommandGroup) commandGroupsComboBoxModel.getSelectedItem();
+    commandGroupsComboBoxModel.removeAllElements();
+    settings.getGroups().forEach((name, group) -> commandGroupsComboBoxModel.addElement(group));
+    if (prevSelItem != null && commandGroupsComboBoxModel.getIndexOf(prevSelItem) > -1) {
+      commandGroupsComboBoxModel.setSelectedItem(prevSelItem);
+    }
+    renderCommandButtons();
+  }
+
+  void renderCommandButtons() {
     CommandGroup cg = (CommandGroup) commandGroupsComboBoxModel.getSelectedItem();
     commandButtonContainerPanel.removeAll();
     if (cg != null) {
@@ -242,12 +248,11 @@ public class SerialMonitor extends JDialog implements SerialPortDataListener {
     commandButtonContainerPanel.updateUI();
   }
 
-  private void openShortcutsDialog() {
-    ShortcutsDialog sd = new ShortcutsDialog(this, this.commandGroupsComboBoxModel.getAllItems());
+  private void openCommandDialog() {
+    CommandsEditDialog sd = new CommandsEditDialog(this, this.commandGroupsComboBoxModel.getAllItems());
     sd.setVisible(true);
     if (sd.isOk()) {
       reloadGroupsFromSettings();
-      renderShortcutButtons();
     }
   }
 }

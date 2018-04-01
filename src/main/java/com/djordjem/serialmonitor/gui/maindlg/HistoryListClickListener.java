@@ -1,4 +1,4 @@
-package com.djordjem.serialmonitor.gui;
+package com.djordjem.serialmonitor.gui.maindlg;
 
 import com.djordjem.serialmonitor.gui.utils.DialogUtils;
 import com.djordjem.serialmonitor.serialport.SerialPortService;
@@ -10,10 +10,10 @@ import java.awt.event.MouseEvent;
 
 public class HistoryListClickListener extends MouseAdapter {
 
-  private SerialMonitor serialMonitor;
+  private MainDialog mainDialog;
 
-  public HistoryListClickListener(SerialMonitor serialMonitor) {
-    this.serialMonitor = serialMonitor;
+  public HistoryListClickListener(MainDialog mainDialog) {
+    this.mainDialog = mainDialog;
   }
 
   @Override
@@ -21,15 +21,8 @@ public class HistoryListClickListener extends MouseAdapter {
     JList list = (JList) evt.getSource();
     if (evt.getClickCount() == 2 && SerialPortService.INSTANCE.isPortOpen()) {
       int index = list.locationToIndex(evt.getPoint());
-      serialMonitor.sendLine((String) list.getModel().getElementAt(index), true, false);
+      mainDialog.sendLine((String) list.getModel().getElementAt(index), true, false);
     }
-  }
-
-  public void mousePressed(MouseEvent e) {
-    if (e.isPopupTrigger()) {
-      doPop(e);
-    }
-    super.mousePressed(e);
   }
 
   public void mouseReleased(MouseEvent e) {
@@ -44,7 +37,7 @@ public class HistoryListClickListener extends MouseAdapter {
     int row = list.locationToIndex(e.getPoint());
     list.setSelectedIndex(row);
 
-    HistoryContextMenu menu = new HistoryContextMenu(serialMonitor, (String) list.getModel().getElementAt(row));
+    HistoryContextMenu menu = new HistoryContextMenu(mainDialog, (String) list.getModel().getElementAt(row));
     menu.show(e.getComponent(), e.getX(), e.getY());
   }
 
@@ -53,17 +46,17 @@ public class HistoryListClickListener extends MouseAdapter {
    */
   class HistoryContextMenu extends JPopupMenu {
 
-    private SerialMonitor serialMonitor;
+    private MainDialog mainDialog;
     private String command;
 
     private JMenuItem sendMenuItem = new JMenuItem("Send");
     private JMenuItem editBeforeSendMenuItem = new JMenuItem("Edit before send");
     private JMenuItem sendWithoutLineSepMenuItem = new JMenuItem("Send without line separator");
-    private JMenu saveAsShortcut = new JMenu("Save as shortcut");
-    private JMenuItem newGroupMenuItem = new JMenuItem("New shortcut group...");
+    private JMenu saveCommandMenu = new JMenu("Save command");
+    private JMenuItem newGroupMenuItem = new JMenuItem("New command group...");
 
-    HistoryContextMenu(SerialMonitor serialMonitor, String command) {
-      this.serialMonitor = serialMonitor;
+    HistoryContextMenu(MainDialog mainDialog, String command) {
+      this.mainDialog = mainDialog;
       this.command = command;
       setEnabledStateForMenuItems();
       initListeners();
@@ -74,26 +67,27 @@ public class HistoryListClickListener extends MouseAdapter {
       add(sendMenuItem);
       add(editBeforeSendMenuItem);
       add(sendWithoutLineSepMenuItem);
-      add(saveAsShortcut);
+      add(saveCommandMenu);
 
       // Submenu with command groups
-      serialMonitor.commandGroupsComboBoxModel.getAllItems().forEach(commandGroup -> {
+      CommandGroupsComboModel commandGroupsModel = mainDialog.commandGroupsComboBoxModel;
+      commandGroupsModel.getAllItems().forEach(commandGroup -> {
         JMenuItem commandGroupMI = new JMenuItem(commandGroup.getName());
-        saveAsShortcut.add(commandGroupMI);
+        saveCommandMenu.add(commandGroupMI);
         commandGroupMI.addActionListener(e -> {
           String groupName = ((JMenuItem) e.getSource()).getText();
-          serialMonitor.commandGroupsComboBoxModel.getAllItems().forEach(commandGroup1 -> {
+          commandGroupsModel.getAllItems().forEach(commandGroup1 -> {
             if (commandGroup.getName().equals(groupName)) {
               if (!commandGroup.getCommands().contains(command)) {
                 commandGroup.addCommand(command);
-                serialMonitor.renderShortcutButtons();
+                mainDialog.renderCommandButtons();
               }
             }
           });
         });
       });
-      saveAsShortcut.add(new JSeparator());
-      saveAsShortcut.add(newGroupMenuItem);
+      saveCommandMenu.add(new JSeparator());
+      saveCommandMenu.add(newGroupMenuItem);
       newGroupMenuItem.addActionListener(e -> addCommandToNewGroup());
     }
 
@@ -104,20 +98,20 @@ public class HistoryListClickListener extends MouseAdapter {
     }
 
     private void initListeners() {
-      sendMenuItem.addActionListener(e -> serialMonitor.sendLine(command, true, false));
-      sendWithoutLineSepMenuItem.addActionListener(e -> serialMonitor.sendLine(command, false, false));
+      sendMenuItem.addActionListener(e -> mainDialog.sendLine(command, true, false));
+      sendWithoutLineSepMenuItem.addActionListener(e -> mainDialog.sendLine(command, false, false));
       editBeforeSendMenuItem.addActionListener(e -> {
-        serialMonitor.textFieldLineToSend.setText(command);
-        serialMonitor.textFieldLineToSend.grabFocus();
+        mainDialog.sendTextField.setText(command);
+        mainDialog.sendTextField.grabFocus();
       });
     }
 
     private void addCommandToNewGroup() {
-      String newGroupName = DialogUtils.textInput(this.serialMonitor, "Shortcut group name");
+      String newGroupName = DialogUtils.textInput(this.mainDialog, "Command group name");
       CommandGroup newGroup = new CommandGroup(newGroupName);
       newGroup.addCommand(command);
-      serialMonitor.commandGroupsComboBoxModel.addElement(newGroup);
-      serialMonitor.commandGroupsComboBoxModel.setSelectedItem(newGroup);
+      mainDialog.commandGroupsComboBoxModel.addElement(newGroup);
+      mainDialog.commandGroupsComboBoxModel.setSelectedItem(newGroup);
     }
   }
 }
