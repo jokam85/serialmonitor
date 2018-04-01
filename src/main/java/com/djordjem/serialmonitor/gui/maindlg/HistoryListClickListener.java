@@ -21,7 +21,8 @@ public class HistoryListClickListener extends MouseAdapter {
     JList list = (JList) evt.getSource();
     if (evt.getClickCount() == 2 && SerialPortService.INSTANCE.isPortOpen()) {
       int index = list.locationToIndex(evt.getPoint());
-      mainDialog.sendLine((String) list.getModel().getElementAt(index), true, false);
+      String c = (String) list.getModel().getElementAt(index);
+      mainDialog.sendLine(c, true, false);
     }
   }
 

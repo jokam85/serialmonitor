@@ -239,10 +239,10 @@ public class MainDialog extends JDialog implements SerialPortDataListener {
     if (cg != null) {
       boolean portOpen = SerialPortService.INSTANCE.isPortOpen();
       cg.getCommands().forEach(cmd -> {
-        JButton cmdBtn = new JButton(cmd);
+        JButton cmdBtn = new JButton(cmd.getCommand());
         cmdBtn.setEnabled(portOpen);
         commandButtonContainerPanel.add(cmdBtn);
-        cmdBtn.addActionListener(e -> sendLine(cmd, true, true));
+        cmdBtn.addActionListener(e -> sendLine(cmd.getCommand(), true, true));
       });
     }
     commandButtonContainerPanel.updateUI();

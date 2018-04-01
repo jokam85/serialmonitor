@@ -15,7 +15,7 @@ due to permissions required for accessing serial ports.**
 ## Releases
 
 ## v1.2 [download](https://github.com/jokam85/serialmonitor/releases/download/v1.2/serialmonitor.jar)
-* commands and command groups edit (TODO)
+* commands and command groups edit
 * commands and command groups
 * commands and command groups - quick add from history
 * commands and command groups editing
@@ -37,6 +37,7 @@ due to permissions required for accessing serial ports.**
 
 ## Planned features and bugfixes (TODO)
 * BUG offscreen command buttons. break them into rows
+* command name
 * save log as, save history as
 * chat mode (show sent messages)
 * display special chars (\n, \r)

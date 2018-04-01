@@ -7,7 +7,7 @@ public class CommandGroup {
 
   private String name;
 
-  private List<String> commands = new ArrayList<>();
+  private List<Command> commands = new ArrayList<>();
 
   CommandGroup() {
     super();
@@ -17,10 +17,21 @@ public class CommandGroup {
     this.name = name;
   }
 
-  public CommandGroup addCommand(String command) {
-    if (command != null && command.trim().length() > 0)
+  public CommandGroup addCommand(Command command) {
+    String cName = command.getCommand();
+    if (cName != null && cName.trim().length() > 0) {
       commands.add(command);
+    }
     return this;
+  }
+
+  public CommandGroup addCommand(String cName) {
+    commands.add(new Command(cName));
+    return this;
+  }
+
+  public void removeCommand(Command command) {
+    commands.remove(command);
   }
 
   public String getName() {
@@ -31,16 +42,14 @@ public class CommandGroup {
     this.name = name;
   }
 
-  public List<String> getCommands() {
+  public List<Command> getCommands() {
     return commands;
-  }
-
-  public void setCommands(List<String> commands) {
-    this.commands = commands;
   }
 
   @Override
   public String toString() {
     return name;
   }
+
+
 }

@@ -2,6 +2,7 @@ package com.djordjem.serialmonitor.gui.commanddlg;
 
 import com.djordjem.serialmonitor.gui.models.CustomListModel;
 import com.djordjem.serialmonitor.gui.utils.DialogUtils;
+import com.djordjem.serialmonitor.model.Command;
 import com.djordjem.serialmonitor.model.CommandGroup;
 import com.djordjem.serialmonitor.settings.SettingsFactory;
 import com.djordjem.serialmonitor.settings.SettingsService;
@@ -22,11 +23,11 @@ public class CommandsEditDialog extends JDialog {
   private JButton addCommandGroupButton;
   private JButton addCommandButton;
   private JList<CommandGroup> groupList;
-  private JList<String> commandList;
+  private JList<Command> commandList;
   private JButton restoreDefaultsbutton;
 
   private CustomListModel<CommandGroup> groupListModel = new CustomListModel<>();
-  private CustomListModel<String> commandModel = new CustomListModel<>();
+  private CustomListModel<Command> commandModel = new CustomListModel<>();
 
   private boolean ok = false;
 
@@ -97,8 +98,9 @@ public class CommandsEditDialog extends JDialog {
   private void addCommand() {
     CommandGroup cg = groupList.getSelectedValue();
     if (cg != null) {
-      String command = DialogUtils.textInput(this, "Command");
-      if (command != null && command.trim().length() > 0) {
+      String commandName = DialogUtils.textInput(this, "Command");
+      if (commandName != null && commandName.trim().length() > 0) {
+        Command command = new Command(commandName);
         cg.addCommand(command);
         commandModel.add(commandModel.getSize(), command);
       }
