@@ -7,12 +7,19 @@ import java.util.stream.IntStream;
 
 public class CustomListModel<T> extends DefaultListModel<T> {
 
-  public void addAtTop(T item, boolean ignoreIfSameAsLast, int maxNumberOfItems) {
+  public void addToBottom(T item) {
+    insertElementAt(item, getSize());
+  }
+
+  public void addToTop(T item) {
+    insertElementAt(item, 0);
+  }
+
+  public void addToTop(T item, boolean ignoreIfSameAsLast, int maxNumberOfItems) {
     if (ignoreIfSameAsLast && sameAsLast(item)) {
       return;
     }
     insertElementAt(item, 0);
-
     while (size() > maxNumberOfItems) {
       removeElementAt(size() - 1);
     }

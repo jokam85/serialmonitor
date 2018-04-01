@@ -1,6 +1,8 @@
 package com.djordjem.serialmonitor.settings;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Settings {
@@ -20,8 +22,35 @@ public class Settings {
   private History history = new History();
   private Map<String, CommandGroup> commandGroups = new HashMap<>();
 
+
+  public static List<CommandGroup> createDefaultGroups() {
+    ArrayList<CommandGroup> list = new ArrayList<>();
+    list.add(new CommandGroup("HC-05 Bluetooth")
+            .addCommand("AT")
+            .addCommand("AT2")
+            .addCommand("AT3")
+            .addCommand("AT4"));
+
+    list.add(new CommandGroup("HC-12 433Mhz radio module")
+            .addCommand("AT2")
+            .addCommand("AT3")
+            .addCommand("AT4"));
+
+    list.add(new CommandGroup("HM-10 BLE Bluetooth 4.0")
+            .addCommand("AT2")
+            .addCommand("AT3")
+            .addCommand("AT4"));
+
+    list.add(new CommandGroup("SIM800L GPRS Module")
+            .addCommand("AT2")
+            .addCommand("AT3")
+            .addCommand("AT4"));
+
+    return list;
+  }
+
   Settings() {
-    initDefaultGroups();
+    createDefaultGroups().forEach(this::addGroup);
   }
 
   public Map<String, CommandGroup> getGroups() {
@@ -30,36 +59,6 @@ public class Settings {
 
   public void addGroup(CommandGroup group) {
     commandGroups.put(group.getName(), group);
-  }
-
-  private CommandGroup createGroup(String groupName) {
-    CommandGroup group = new CommandGroup(groupName);
-    addGroup(group);
-    return group;
-  }
-
-  private void initDefaultGroups() {
-
-    createGroup("HC-05 Bluetooth")
-            .addCommand("AT")
-            .addCommand("AT2")
-            .addCommand("AT3")
-            .addCommand("AT4");
-
-    createGroup("HC-12 433Mhz radio module")
-            .addCommand("AT2")
-            .addCommand("AT3")
-            .addCommand("AT4");
-
-    createGroup("HM-10 BLE Bluetooth 4.0")
-            .addCommand("AT2")
-            .addCommand("AT3")
-            .addCommand("AT4");
-
-    createGroup("SIM800L GPRS Module")
-            .addCommand("AT2")
-            .addCommand("AT3")
-            .addCommand("AT4");
   }
 
   public Integer getWidth() {

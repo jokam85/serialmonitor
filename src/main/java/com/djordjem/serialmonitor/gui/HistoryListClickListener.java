@@ -1,5 +1,6 @@
 package com.djordjem.serialmonitor.gui;
 
+import com.djordjem.serialmonitor.gui.utils.DialogUtils;
 import com.djordjem.serialmonitor.serialport.SerialPortService;
 import com.djordjem.serialmonitor.settings.CommandGroup;
 
@@ -112,7 +113,7 @@ public class HistoryListClickListener extends MouseAdapter {
     }
 
     private void addCommandToNewGroup() {
-      String newGroupName = JOptionPane.showInputDialog(this.serialMonitor, "Please input a value");
+      String newGroupName = DialogUtils.textInput(this.serialMonitor, "Shortcut group name");
       CommandGroup newGroup = new CommandGroup(newGroupName);
       newGroup.addCommand(command);
       serialMonitor.commandGroupsComboBoxModel.addElement(newGroup);

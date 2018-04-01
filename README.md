@@ -14,10 +14,10 @@ due to permissions required for accessing serial ports.**
 
 ## Releases
 
-## v1.2 (TODO)
+## v1.2
 * command shortcuts and shortcut groups
 * command shortcuts and shortcut groups - quick add from history
-* command shortcuts and shortcut groups editing (TODO)
+* command shortcuts and shortcut groups editing
 * BUGFIX do not add sequential duplicates to history
 
 ## v1.1 [download](https://github.com/jokam85/serialmonitor/releases/download/v1.1/serialmonitor.jar)

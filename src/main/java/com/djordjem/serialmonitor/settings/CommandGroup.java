@@ -18,7 +18,8 @@ public class CommandGroup {
   }
 
   public CommandGroup addCommand(String command) {
-    commands.add(command);
+    if (command != null && command.trim().length() > 0)
+      commands.add(command);
     return this;
   }
 
