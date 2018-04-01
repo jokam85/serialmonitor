@@ -175,8 +175,8 @@ public class MainDialog extends JDialog implements SerialPortDataListener {
     if (nlSeparator.equals("CR")) {
       return "\r";
     }
-    if (nlSeparator.equals("NL+CR")) {
-      return "\n\r";
+    if (nlSeparator.equals("CR+NL")) {
+      return "\r\n";
     }
     return "";
   }
