@@ -35,17 +35,17 @@ due to permissions required for accessing serial ports.**
 * all possible baudrates
 * autoscroll
 
-## Planned features (TODO)
+## Planned features and bugfixes (TODO)
+* BUG offscreen command buttons. break them into rows
 * save log as, save history as
 * chat mode (show sent messages)
-* display special chars
+* display special chars (\n, \r)
 * display connection status
 * display errors when sending fails
 * display errors port fails to open
 * save window content to file
 * apend to file
 * pattern recognition (highlight or show only pattern)
-* RTS, CTS...
 * executing external programs on pattern recognized
 * autoconnect to new port if not connected
 * binary data (byte separation)

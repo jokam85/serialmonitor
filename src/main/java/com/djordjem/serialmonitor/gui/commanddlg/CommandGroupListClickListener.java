@@ -32,7 +32,7 @@ public class CommandGroupListClickListener extends MouseAdapter {
     JList list = (JList) e.getSource();
     int row = list.locationToIndex(e.getPoint());
     list.setSelectedIndex(row);
-    CommandListContextMenu menu = new CommandListContextMenu((CommandGroup) list.getModel().getElementAt(row));
+    CommandListContextMenu menu = new CommandListContextMenu(list, (CommandGroup) list.getModel().getElementAt(row));
     menu.show(e.getComponent(), e.getX(), e.getY());
   }
 
@@ -42,12 +42,16 @@ public class CommandGroupListClickListener extends MouseAdapter {
   class CommandListContextMenu extends JPopupMenu {
 
     private CommandGroup commandGroup;
+    private JList cgList;
 
     private JMenuItem deleteMenuItem = new JMenuItem("Delete");
+    private JMenuItem renameMenuItem = new JMenuItem("Rename");
 
-    CommandListContextMenu(CommandGroup commandGroup) {
+    CommandListContextMenu(JList cgList, CommandGroup commandGroup) {
       this.commandGroup = commandGroup;
+      this.cgList = cgList;
       initListeners();
+      add(renameMenuItem);
       add(deleteMenuItem);
     }
 
@@ -55,6 +59,13 @@ public class CommandGroupListClickListener extends MouseAdapter {
       deleteMenuItem.addActionListener(e -> {
         if (DialogUtils.yesNo(owner, "Are you sure you want to delete command group?")) {
           groupListModel.removeElement(commandGroup);
+        }
+      });
+      renameMenuItem.addActionListener(e -> {
+        String newName = DialogUtils.textInput(owner, "New command group name", commandGroup.getName());
+        if (newName != null && newName.trim().length() > 0) {
+          commandGroup.setName(newName);
+          cgList.updateUI();
         }
       });
     }

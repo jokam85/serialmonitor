@@ -19,4 +19,8 @@ public abstract class DialogUtils {
   public static String textInput(Component owner, String text) {
     return JOptionPane.showInputDialog(owner, text);
   }
+
+  public static String textInput(Component owner, String text, String initialValue) {
+    return JOptionPane.showInputDialog(owner, text, initialValue);
+  }
 }

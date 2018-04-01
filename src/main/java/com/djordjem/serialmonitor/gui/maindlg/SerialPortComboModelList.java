@@ -25,7 +25,8 @@ public class SerialPortComboModelList extends CustomComboModel<SerialPortDTO> im
       if (sp.equals(previoslySelectedPort)) {
         setSelectedItem(sp);
       }
-      if (!firstInitialisationDone && sp.getSystemPortName().equals(SettingsService.SETTINGS.getSettings().getPortName())) {
+      String lastUsedPortName = SettingsService.SETTINGS.getSettings().getPortName();
+      if (!firstInitialisationDone && sp.getSystemPortName().equals(lastUsedPortName)) {
         setSelectedItem(sp);
       }
     }
