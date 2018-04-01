@@ -1,6 +1,7 @@
 package com.djordjem.serialmonitor.gui.maindlg;
 
 import com.djordjem.serialmonitor.gui.utils.DialogUtils;
+import com.djordjem.serialmonitor.model.Command;
 import com.djordjem.serialmonitor.model.CommandGroup;
 import com.djordjem.serialmonitor.serialport.SerialPortService;
 
@@ -77,10 +78,11 @@ public class HistoryListClickListener extends MouseAdapter {
         saveCommandMenu.add(commandGroupMI);
         commandGroupMI.addActionListener(e -> {
           String groupName = ((JMenuItem) e.getSource()).getText();
-          commandGroupsModel.getAllItems().forEach(commandGroup1 -> {
-            if (commandGroup.getName().equals(groupName)) {
-              if (!commandGroup.getCommands().contains(command)) {
-                commandGroup.addCommand(command);
+          commandGroupsModel.getAllItems().forEach(cg -> {
+            if (cg.getName().equals(groupName)) {
+              Command c = new Command(command);
+              if (!cg.getCommands().contains(c)) {
+                cg.addCommand(c);
                 mainDialog.renderCommandButtons();
               }
             }
