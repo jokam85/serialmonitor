@@ -11,21 +11,19 @@ public enum SettingsService {
   SETTINGS;
 
   static final ObjectMapper objectMapper = new ObjectMapper();
+  static final String USER_DIR = System.getProperty("user.home");
+  static final String FILE_NAME = ".serialmonitor";
 
   static {
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
   }
 
-  static final String USER_DIR = System.getProperty("user.home");
-  static final String FILE_NAME = ".serialmonitor";
-
   private Settings settings;
 
   public Settings getSettings() {
-    if (this.settings != null) {
-      return this.settings;
+    if (this.settings == null) {
+      this.settings = loadFromFile().orElse(SettingsFactory.createDefaultSettings());
     }
-    this.settings = loadFromFile().orElse(createDefaultSettings());
     return this.settings;
   }
 
@@ -37,7 +35,7 @@ public enum SettingsService {
     }
   }
 
-  private Optional<Settings> loadFromFile() {
+  private static Optional<Settings> loadFromFile() {
     File sf = settingsFile();
     if (sf.exists() && settingsFile().canRead()) {
       try {
@@ -49,12 +47,8 @@ public enum SettingsService {
     return Optional.empty();
   }
 
-  private File settingsFile() {
+  private static File settingsFile() {
     return new File(USER_DIR.concat(File.separator).concat(FILE_NAME));
-  }
-
-  public Settings createDefaultSettings() {
-    return new Settings();
   }
 
 }

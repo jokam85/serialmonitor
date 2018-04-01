@@ -2,10 +2,10 @@ package com.djordjem.serialmonitor.gui.maindlg;
 
 import com.djordjem.serialmonitor.gui.commanddlg.CommandsEditDialog;
 import com.djordjem.serialmonitor.gui.models.CustomListModel;
+import com.djordjem.serialmonitor.model.CommandGroup;
 import com.djordjem.serialmonitor.serialport.SerialPortDTO;
 import com.djordjem.serialmonitor.serialport.SerialPortDataListener;
 import com.djordjem.serialmonitor.serialport.SerialPortService;
-import com.djordjem.serialmonitor.settings.CommandGroup;
 import com.djordjem.serialmonitor.settings.Settings;
 
 import javax.swing.*;
@@ -23,7 +23,7 @@ public class MainDialog extends JDialog implements SerialPortDataListener {
   // Models
   private Settings settings;
   private CustomListModel<String> historyListModel;
-  SerialPortComboModel portsCmbModel;
+  SerialPortComboModelList portsCmbModel;
   CommandGroupsComboModel commandGroupsComboBoxModel;
 
   JPanel contentPane;
@@ -55,7 +55,7 @@ public class MainDialog extends JDialog implements SerialPortDataListener {
 
     settings = SETTINGS.getSettings();
 
-    portsCmbModel = new SerialPortComboModel();
+    portsCmbModel = new SerialPortComboModelList();
     serialPortsCmb.setModel(portsCmbModel);
 
     historyListModel = new CustomListModel<>();
@@ -226,7 +226,7 @@ public class MainDialog extends JDialog implements SerialPortDataListener {
   private void reloadGroupsFromSettings() {
     CommandGroup prevSelItem = (CommandGroup) commandGroupsComboBoxModel.getSelectedItem();
     commandGroupsComboBoxModel.removeAllElements();
-    settings.getGroups().forEach((name, group) -> commandGroupsComboBoxModel.addElement(group));
+    settings.getGroups().forEach(commandGroupsComboBoxModel::addElement);
     if (prevSelItem != null && commandGroupsComboBoxModel.getIndexOf(prevSelItem) > -1) {
       commandGroupsComboBoxModel.setSelectedItem(prevSelItem);
     }

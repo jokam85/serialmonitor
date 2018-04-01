@@ -18,7 +18,7 @@ public enum SerialPortService implements com.fazecast.jSerialComm.SerialPortData
 
   private List<SerialPortDataListener> dataListeners = new ArrayList<>();
 
-  private List<SerialPortsListener> serialPortListeners = new ArrayList<>();
+  private List<SerialPortsListListener> serialPortListeners = new ArrayList<>();
 
   private SerialPort openedPort;
 
@@ -59,7 +59,7 @@ public enum SerialPortService implements com.fazecast.jSerialComm.SerialPortData
     this.dataListeners.add(dataListener);
   }
 
-  public void addPortsChangedListener(SerialPortsListener dataListener) {
+  public void addPortsChangedListener(SerialPortsListListener dataListener) {
     this.serialPortListeners.add(dataListener);
   }
 

@@ -2,8 +2,8 @@ package com.djordjem.serialmonitor.gui.commanddlg;
 
 import com.djordjem.serialmonitor.gui.models.CustomListModel;
 import com.djordjem.serialmonitor.gui.utils.DialogUtils;
-import com.djordjem.serialmonitor.settings.CommandGroup;
-import com.djordjem.serialmonitor.settings.Settings;
+import com.djordjem.serialmonitor.model.CommandGroup;
+import com.djordjem.serialmonitor.settings.SettingsFactory;
 import com.djordjem.serialmonitor.settings.SettingsService;
 
 import javax.swing.*;
@@ -108,7 +108,7 @@ public class CommandsEditDialog extends JDialog {
   private void restoreDefaults() {
     if (DialogUtils.yesNo(this, "Are you sure you want to restore defaults and loose your custom groups and commands?")) {
       groupListModel.removeAllElements();
-      Settings.createDefaultGroups().forEach(groupListModel::addToTop);
+      SettingsFactory.createDefaultGroups().forEach(groupListModel::addToBottom);
     }
   }
 

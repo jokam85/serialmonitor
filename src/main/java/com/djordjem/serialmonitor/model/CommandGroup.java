@@ -1,4 +1,4 @@
-package com.djordjem.serialmonitor.settings;
+package com.djordjem.serialmonitor.model;
 
 import java.util.ArrayList;
 import java.util.List;

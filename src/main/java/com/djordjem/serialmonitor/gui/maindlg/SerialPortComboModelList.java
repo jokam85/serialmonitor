@@ -3,16 +3,16 @@ package com.djordjem.serialmonitor.gui.maindlg;
 import com.djordjem.serialmonitor.gui.models.CustomComboModel;
 import com.djordjem.serialmonitor.serialport.SerialPortDTO;
 import com.djordjem.serialmonitor.serialport.SerialPortService;
-import com.djordjem.serialmonitor.serialport.SerialPortsListener;
+import com.djordjem.serialmonitor.serialport.SerialPortsListListener;
 import com.djordjem.serialmonitor.settings.SettingsService;
 
 import java.util.List;
 
-public class SerialPortComboModel extends CustomComboModel<SerialPortDTO> implements SerialPortsListener {
+public class SerialPortComboModelList extends CustomComboModel<SerialPortDTO> implements SerialPortsListListener {
 
   private boolean firstInitialisationDone = false;
 
-  public SerialPortComboModel() {
+  public SerialPortComboModelList() {
     SerialPortService.INSTANCE.addPortsChangedListener(this);
   }
 

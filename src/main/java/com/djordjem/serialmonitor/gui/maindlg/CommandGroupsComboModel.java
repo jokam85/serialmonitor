@@ -1,7 +1,7 @@
 package com.djordjem.serialmonitor.gui.maindlg;
 
 import com.djordjem.serialmonitor.gui.models.CustomComboModel;
-import com.djordjem.serialmonitor.settings.CommandGroup;
+import com.djordjem.serialmonitor.model.CommandGroup;
 
 public class CommandGroupsComboModel extends CustomComboModel<CommandGroup> {
 

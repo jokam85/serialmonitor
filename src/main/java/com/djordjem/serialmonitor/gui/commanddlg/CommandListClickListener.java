@@ -2,7 +2,7 @@ package com.djordjem.serialmonitor.gui.commanddlg;
 
 import com.djordjem.serialmonitor.gui.models.CustomListModel;
 import com.djordjem.serialmonitor.gui.utils.DialogUtils;
-import com.djordjem.serialmonitor.settings.CommandGroup;
+import com.djordjem.serialmonitor.model.CommandGroup;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
