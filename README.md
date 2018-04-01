@@ -10,7 +10,7 @@ due to permissions required for accessing serial ports.**
 
 [Java JRE](https://java.com/en/download/) (version 8 or greater) is required to launch this application.
 
-![Screenshot](https://raw.githubusercontent.com/jokam85/serialmonitor/master/docs/Screenshot_1.jpg)
+![Screenshot](https://raw.githubusercontent.com/jokam85/serialmonitor/master/docs/Screenshot_1_2.jpg)
 
 ## Releases
 
@@ -37,7 +37,8 @@ due to permissions required for accessing serial ports.**
 
 ## Planned features and bugfixes (TODO)
 * BUG offscreen command buttons. break them into rows
-* command name
+* command labels
+* exporting / importing command groups
 * save log as, save history as
 * chat mode (show sent messages)
 * display special chars (\n, \r)
@@ -49,8 +50,6 @@ due to permissions required for accessing serial ports.**
 * pattern recognition (highlight or show only pattern)
 * executing external programs on pattern recognized
 * autoconnect to new port if not connected
-* binary data (byte separation)
-* limited and configurable console window content
 * settings menu
 * sniffer (passthrough mode)
 * copy/paste
