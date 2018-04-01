@@ -64,10 +64,10 @@
             </constraints>
             <properties>
               <model>
-                <item value="NONE"/>
-                <item value="NL"/>
-                <item value="CR"/>
-                <item value="NL+CR"/>
+                <item value="No line separator"/>
+                <item value="\n"/>
+                <item value="\r"/>
+                <item value="\r\n"/>
               </model>
             </properties>
           </component>

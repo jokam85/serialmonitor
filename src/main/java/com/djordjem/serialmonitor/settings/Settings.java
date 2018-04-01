@@ -18,7 +18,7 @@ public class Settings {
   private String commandGroupName;
   private Boolean autoscroll = true;
   private Boolean sendAsYouType = false;
-  private String lineEnding = "NL";
+  private String lineEnding = "\\n";
   private Integer historyTextSeparatorPosition = 100;
   private History history = new History();
   private List<CommandGroup> commandGroups = new ArrayList<>();
