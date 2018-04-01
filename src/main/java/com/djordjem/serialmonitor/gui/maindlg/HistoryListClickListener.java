@@ -76,18 +76,7 @@ public class HistoryListClickListener extends MouseAdapter {
       commandGroupsModel.getAllItems().forEach(commandGroup -> {
         JMenuItem commandGroupMI = new JMenuItem(commandGroup.getName());
         saveCommandMenu.add(commandGroupMI);
-        commandGroupMI.addActionListener(e -> {
-          String groupName = ((JMenuItem) e.getSource()).getText();
-          commandGroupsModel.getAllItems().forEach(cg -> {
-            if (cg.getName().equals(groupName)) {
-              Command c = new Command(command);
-              if (!cg.getCommands().contains(c)) {
-                cg.addCommand(c);
-                mainDialog.renderCommandButtons();
-              }
-            }
-          });
-        });
+        commandGroupMI.addActionListener(e -> addCommandToExistingGroup(commandGroup));
       });
       saveCommandMenu.add(new JSeparator());
       saveCommandMenu.add(newGroupMenuItem);
@@ -115,6 +104,14 @@ public class HistoryListClickListener extends MouseAdapter {
       newGroup.addCommand(command);
       mainDialog.commandGroupsComboBoxModel.addElement(newGroup);
       mainDialog.commandGroupsComboBoxModel.setSelectedItem(newGroup);
+    }
+
+    private void addCommandToExistingGroup(CommandGroup commandGroup) {
+      Command c = new Command(command);
+      if (!commandGroup.getCommands().contains(c)) {
+        commandGroup.addCommand(c);
+        mainDialog.renderCommandButtons();
+      }
     }
   }
 }
