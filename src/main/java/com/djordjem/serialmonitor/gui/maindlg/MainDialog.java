@@ -2,17 +2,20 @@ package com.djordjem.serialmonitor.gui.maindlg;
 
 import com.djordjem.serialmonitor.gui.commanddlg.CommandsEditDialog;
 import com.djordjem.serialmonitor.gui.models.CustomListModel;
+import com.djordjem.serialmonitor.gui.utils.FileUtils;
 import com.djordjem.serialmonitor.model.CommandGroup;
 import com.djordjem.serialmonitor.serialport.SerialPortDTO;
 import com.djordjem.serialmonitor.serialport.SerialPortDataListener;
 import com.djordjem.serialmonitor.serialport.SerialPortService;
 import com.djordjem.serialmonitor.settings.Settings;
+import com.djordjem.serialmonitor.settings.SettingsService;
 
 import javax.swing.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.stream.IntStream;
 
 import static com.djordjem.serialmonitor.constants.Constants.POSSIBLE_BAUDRATES;
@@ -45,6 +48,7 @@ public class MainDialog extends JDialog implements SerialPortDataListener {
   JComboBox<CommandGroup> commandGroupsComboBox;
   JPanel commandButtonContainerPanel;
   JButton editCommandBtn;
+  JButton saveLogAsButton;
 
   private final GuiUpdater guiUpdater = new GuiUpdater(this);
 
@@ -112,6 +116,7 @@ public class MainDialog extends JDialog implements SerialPortDataListener {
     openPortBtn.addActionListener(e -> openPort());
     closeBtn.addActionListener(e -> SerialPortService.INSTANCE.closePort());
     clearBtn.addActionListener(e -> clearTextField());
+    saveLogAsButton.addActionListener((e) -> saveLogAs());
     sendButton.addActionListener(e -> sendEnteredText());
     clearHistoryBtn.addActionListener(e -> historyListModel.clear());
     editCommandBtn.addActionListener(e -> openCommandDialog());
@@ -162,6 +167,19 @@ public class MainDialog extends JDialog implements SerialPortDataListener {
 
   private void clearTextField() {
     serialText.setText("");
+  }
+
+  private void saveLogAs() {
+    Settings s = SettingsService.SETTINGS.getSettings();
+    File lastFile = null;
+    String filePath = s.getLastLogSaveAsFilePath();
+    if (filePath != null) {
+      lastFile = new File(filePath);
+    }
+    File savedFile = FileUtils.saveTextToFile(this, serialText.getText(), lastFile);
+    if (savedFile != null) {
+      s.setLastLogSaveAsFilePath(savedFile.getAbsolutePath());
+    }
   }
 
   private String getNewLine() {

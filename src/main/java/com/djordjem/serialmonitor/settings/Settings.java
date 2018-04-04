@@ -22,6 +22,7 @@ public class Settings {
   private Integer historyTextSeparatorPosition = 100;
   private History history = new History();
   private List<CommandGroup> commandGroups = new ArrayList<>();
+  private String lastLogSaveAsFilePath;
 
   Settings() {
     // package private
@@ -142,5 +143,13 @@ public class Settings {
 
   public void setCommandGroupName(String commandGroupName) {
     this.commandGroupName = commandGroupName;
+  }
+
+  public String getLastLogSaveAsFilePath() {
+    return lastLogSaveAsFilePath;
+  }
+
+  public void setLastLogSaveAsFilePath(String lastLogSaveAsFilePath) {
+    this.lastLogSaveAsFilePath = lastLogSaveAsFilePath;
   }
 }

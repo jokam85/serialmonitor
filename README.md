@@ -15,7 +15,7 @@ due to permissions required for accessing serial ports.**
 ## Releases
 
 ## v1.3 
-* save log as (TODO)
+* save log as
 * save history as (TODO)
 
 ## v1.2 [download](https://github.com/jokam85/serialmonitor/releases/download/v1.2/serialmonitor.jar)
