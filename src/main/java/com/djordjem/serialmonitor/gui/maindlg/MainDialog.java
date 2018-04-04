@@ -48,7 +48,8 @@ public class MainDialog extends JDialog implements SerialPortDataListener {
   JComboBox<CommandGroup> commandGroupsComboBox;
   JPanel commandButtonContainerPanel;
   JButton editCommandBtn;
-  JButton saveLogAsButton;
+  JButton saveLogButton;
+  JButton saveHistoryButton;
 
   private final GuiUpdater guiUpdater = new GuiUpdater(this);
 
@@ -116,7 +117,7 @@ public class MainDialog extends JDialog implements SerialPortDataListener {
     openPortBtn.addActionListener(e -> openPort());
     closeBtn.addActionListener(e -> SerialPortService.INSTANCE.closePort());
     clearBtn.addActionListener(e -> clearTextField());
-    saveLogAsButton.addActionListener((e) -> saveLogAs());
+    saveLogButton.addActionListener(e -> saveLogAs());
     sendButton.addActionListener(e -> sendEnteredText());
     clearHistoryBtn.addActionListener(e -> historyListModel.clear());
     editCommandBtn.addActionListener(e -> openCommandDialog());
@@ -140,6 +141,7 @@ public class MainDialog extends JDialog implements SerialPortDataListener {
       }
     });
     historyList.addMouseListener(new HistoryListClickListener(this));
+    saveHistoryButton.addActionListener(e -> saveHistoryAs());
 
     commandGroupsComboBox.addActionListener(event -> renderCommandButtons());
     addWindowListener(new WindowAdapter() {
@@ -179,6 +181,16 @@ public class MainDialog extends JDialog implements SerialPortDataListener {
     File savedFile = FileUtils.saveTextToFile(this, serialText.getText(), lastFile);
     if (savedFile != null) {
       s.setLastLogSaveAsFilePath(savedFile.getAbsolutePath());
+    }
+  }
+
+  private void saveHistoryAs() {
+    Settings s = SettingsService.SETTINGS.getSettings();
+    String filePath = s.getLastHistorySaveAsFilePath();
+    File lastFile = filePath != null ? new File(filePath) : null;
+    File savedFile = FileUtils.saveTextToFile(this, String.join(System.lineSeparator(), historyListModel.getAllItems()), lastFile);
+    if (savedFile != null) {
+      s.setLastHistorySaveAsFilePath(savedFile.getAbsolutePath());
     }
   }
 

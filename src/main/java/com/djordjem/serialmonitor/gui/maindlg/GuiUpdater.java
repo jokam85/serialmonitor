@@ -31,7 +31,7 @@ public class GuiUpdater {
     mainDialog.closeBtn.setVisible(isPortOpened);
     mainDialog.sendTextField.setEnabled(isPortOpened);
     mainDialog.sendButton.setEnabled(isPortOpened && !mainDialog.checkBoxSendAsType.isSelected());
-    mainDialog.saveLogAsButton.setEnabled(mainDialog.serialText.getText().length() > 0);
+    mainDialog.saveLogButton.setEnabled(mainDialog.serialText.getText().length() > 0);
     Arrays.stream(mainDialog.commandButtonContainerPanel.getComponents()).forEach(component -> component.setEnabled(isPortOpened));
   }
 }

@@ -23,6 +23,7 @@ public class Settings {
   private History history = new History();
   private List<CommandGroup> commandGroups = new ArrayList<>();
   private String lastLogSaveAsFilePath;
+  private String lastHistorySaveAsFilePath;
 
   Settings() {
     // package private
@@ -151,5 +152,13 @@ public class Settings {
 
   public void setLastLogSaveAsFilePath(String lastLogSaveAsFilePath) {
     this.lastLogSaveAsFilePath = lastLogSaveAsFilePath;
+  }
+
+  public String getLastHistorySaveAsFilePath() {
+    return lastHistorySaveAsFilePath;
+  }
+
+  public void setLastHistorySaveAsFilePath(String lastHistorySaveAsFilePath) {
+    this.lastHistorySaveAsFilePath = lastHistorySaveAsFilePath;
   }
 }
