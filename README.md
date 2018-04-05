@@ -15,11 +15,17 @@ due to permissions required for accessing serial ports.**
 ## Releases
 
 ## 1.4 TODO
-* BUGFIX disable save as history button when history is empty
+* display special chars (\n, \r) (TODO)
+* display connection status (TODO)
+* display errors when sending fails (TODO)
+* command labels (TODO)
+* saving command groups to separate file, outside of settings file(TODO)
+* BUGFIX offscreen command buttons. break them into rows (TODO)
+* BUGFIX disable save as history button when history is empty (TODO)
 
 ## v1.3 [download](https://github.com/jokam85/serialmonitor/releases/download/v1.3/serialmonitor.jar)
-* save log as
 * save history as
+* display errors port fails to open
 
 ## v1.2 [download](https://github.com/jokam85/serialmonitor/releases/download/v1.2/serialmonitor.jar)
 * commands and command groups edit
@@ -43,19 +49,10 @@ due to permissions required for accessing serial ports.**
 * autoscroll
 
 ## Planned features and bugfixes (TODO)
-* BUG offscreen command buttons. break them into rows
-* command labels
-* exporting / importing command groups
 * chat mode (show sent messages)
-* display special chars (\n, \r)
-* display connection status
-* display errors when sending fails
-* display errors port fails to open
-* save window content to file
 * apend to file
 * pattern recognition (highlight or show only pattern)
 * executing external programs on pattern recognized
 * autoconnect to new port if not connected
-* settings menu
 * sniffer (passthrough mode)
 * copy/paste
