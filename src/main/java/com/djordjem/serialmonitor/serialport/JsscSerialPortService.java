@@ -71,10 +71,10 @@ public class JsscSerialPortService implements ISerialPortService, SerialPortEven
       try {
         openedPort.removeEventListener();
         openedPort.closePort();
-        openedPort = null;
       } catch (SerialPortException e) {
-        // TODO handle gracefully
         e.printStackTrace();
+      } finally {
+        openedPort = null;
       }
     }
   }
@@ -128,9 +128,14 @@ public class JsscSerialPortService implements ISerialPortService, SerialPortEven
       return;
     }
     List<SerialPortDTO> ports = getPorts();
+
+    // Promenio se broj portova? Obavesti slusaoce i ako je nestao tekuci port koji je otvoren, zatvori ga
     if (!(previoslyDetectedSerialPorts.containsAll(ports) && previoslyDetectedSerialPorts.size() == ports.size())) {
       this.previoslyDetectedSerialPorts = ports;
       notifyListenersOnPortListChanged();
+      if (!ports.contains(openedPort)) {
+        closePort();
+      }
     }
   }
 
