@@ -133,7 +133,7 @@ public class JsscSerialPortService implements ISerialPortService, SerialPortEven
     if (!(previoslyDetectedSerialPorts.containsAll(ports) && previoslyDetectedSerialPorts.size() == ports.size())) {
       this.previoslyDetectedSerialPorts = ports;
       notifyListenersOnPortListChanged();
-      if (!ports.contains(openedPort)) {
+      if (openedPort != null && ports.stream().noneMatch(serialPortDTO -> serialPortDTO.getName().equals(openedPort.getPortName()))) {
         closePort();
       }
     }
