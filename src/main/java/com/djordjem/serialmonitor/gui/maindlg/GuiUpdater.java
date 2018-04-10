@@ -1,6 +1,6 @@
 package com.djordjem.serialmonitor.gui.maindlg;
 
-import com.djordjem.serialmonitor.serialport.SerialPortService;
+import com.djordjem.serialmonitor.Main;
 
 import javax.swing.*;
 import java.util.Arrays;
@@ -24,7 +24,7 @@ public class GuiUpdater {
   }
 
   private void doUpdate() {
-    boolean isPortOpened = SerialPortService.INSTANCE.isPortOpen();
+    boolean isPortOpened = Main.SERIAL_PORT_SERVICE.isPortOpen();
     mainDialog.serialPortsCmb.setEnabled(!isPortOpened);
     mainDialog.baudRateCmb.setEnabled(!isPortOpened);
     mainDialog.openPortBtn.setVisible(!isPortOpened);

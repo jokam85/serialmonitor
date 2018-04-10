@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public enum SerialPortService implements com.fazecast.jSerialComm.SerialPortDataListener {
-  INSTANCE;
+public class FazecastSerialPortService implements com.fazecast.jSerialComm.SerialPortDataListener, ISerialPortService {
 
   private List<SerialPortDataListener> dataListeners = new ArrayList<>();
 
@@ -24,15 +23,18 @@ public enum SerialPortService implements com.fazecast.jSerialComm.SerialPortData
 
   private List<SerialPortDTO> previoslyDetectedSerialPorts = new ArrayList<>();
 
-  SerialPortService() {
+  public FazecastSerialPortService() {
     Timer serialPortChecker = new Timer(1000, (event) -> checkIfPortsChanged());
     serialPortChecker.start();
   }
 
+  @Override
   public List<SerialPortDTO> getPorts() {
-    return Stream.of(SerialPort.getCommPorts()).map(SerialPortDTO::new).collect(Collectors.toList());
+
+    return Stream.of(SerialPort.getCommPorts()).map(serialPort -> new SerialPortDTO(serialPort.getSystemPortName(), serialPort.getDescriptivePortName())).collect(Collectors.toList());
   }
 
+  @Override
   public void openPort(String sysPortName, int baudRate) {
     closePort();
     SerialPort portToOpen = SerialPort.getCommPort(sysPortName);
@@ -47,6 +49,7 @@ public enum SerialPortService implements com.fazecast.jSerialComm.SerialPortData
     openedPort.addDataListener(this);
   }
 
+  @Override
   public void closePort() {
     if (openedPort != null && openedPort.isOpen()) {
       openedPort.removeDataListener();
@@ -55,22 +58,27 @@ public enum SerialPortService implements com.fazecast.jSerialComm.SerialPortData
     }
   }
 
+  @Override
   public void addDataListener(SerialPortDataListener dataListener) {
     this.dataListeners.add(dataListener);
   }
 
+  @Override
   public void addPortsChangedListener(SerialPortsListListener dataListener) {
     this.serialPortListeners.add(dataListener);
   }
 
+  @Override
   public void removeDataListener(SerialPortDataListener dataListener) {
     this.dataListeners.remove(dataListener);
   }
 
+  @Override
   public boolean isPortOpen() {
     return openedPort != null && openedPort.isOpen();
   }
 
+  @Override
   public void sendLine(String line, String newLineSeparator) {
     try {
       openedPort.getOutputStream().write(line.getBytes());
@@ -83,6 +91,7 @@ public enum SerialPortService implements com.fazecast.jSerialComm.SerialPortData
     }
   }
 
+  @Override
   public void sendChar(char c) {
     try {
       openedPort.getOutputStream().write(c);
@@ -114,19 +123,23 @@ public enum SerialPortService implements com.fazecast.jSerialComm.SerialPortData
     }
   }
 
+  private void checkIfPortsChanged() {
+    // No listeners? No check needed.
+    if (serialPortListeners.isEmpty()) {
+      return;
+    }
+    List<SerialPortDTO> ports = getPorts();
+    if (!(previoslyDetectedSerialPorts.containsAll(ports) && previoslyDetectedSerialPorts.size() == ports.size())) {
+      this.previoslyDetectedSerialPorts = ports;
+      notifyListenersOnPortListChanged();
+    }
+  }
+
   private void notifyListenersOnNewData(byte[] data) {
     this.dataListeners.forEach(listener -> listener.onNewData(data));
   }
 
   private void notifyListenersOnPortListChanged() {
     this.serialPortListeners.forEach(listener -> listener.portListChanged(previoslyDetectedSerialPorts));
-  }
-
-  private void checkIfPortsChanged() {
-    List<SerialPortDTO> ports = getPorts();
-    if (!(previoslyDetectedSerialPorts.containsAll(ports) && previoslyDetectedSerialPorts.size() == ports.size())) {
-      this.previoslyDetectedSerialPorts = ports;
-      notifyListenersOnPortListChanged();
-    }
   }
 }
