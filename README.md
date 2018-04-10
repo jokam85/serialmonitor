@@ -15,6 +15,7 @@ due to permissions required for accessing serial ports.**
 ## Releases
 
 ## 1.4 TODO
+* Changed serial port lib to jssc
 * display as text (TODO)
 * display as binary (TODO)
 * display as decimal numbers (TODO)
