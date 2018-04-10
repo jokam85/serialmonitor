@@ -15,13 +15,17 @@ due to permissions required for accessing serial ports.**
 ## Releases
 
 ## 1.4 TODO
+* display as text (TODO)
+* display as binary (TODO)
+* display as decimal numbers (TODO)
+* display as hex (TODO)
 * display special chars (\n, \r) (TODO)
 * display connection status (TODO)
 * display errors when sending fails (TODO)
 * command labels (TODO)
 * saving command groups to separate file, outside of settings file(TODO)
 * BUGFIX offscreen command buttons. break them into rows (TODO)
-* BUGFIX disable save as history button when history is empty (TODO)
+* BUGFIX disable save as history button when history is empty
 
 ## v1.3 [download](https://github.com/jokam85/serialmonitor/releases/download/v1.3/serialmonitor.jar)
 * save history as
@@ -56,3 +60,4 @@ due to permissions required for accessing serial ports.**
 * autoconnect to new port if not connected
 * sniffer (passthrough mode)
 * copy/paste
+
