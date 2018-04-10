@@ -1,9 +1,9 @@
 package com.djordjem.serialmonitor.gui.maindlg;
 
+import com.djordjem.serialmonitor.Main;
 import com.djordjem.serialmonitor.gui.utils.DialogUtils;
 import com.djordjem.serialmonitor.model.Command;
 import com.djordjem.serialmonitor.model.CommandGroup;
-import com.djordjem.serialmonitor.serialport.SerialPortService;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -20,7 +20,7 @@ public class HistoryListClickListener extends MouseAdapter {
   @Override
   public void mouseClicked(MouseEvent evt) {
     JList list = (JList) evt.getSource();
-    if (evt.getClickCount() == 2 && SerialPortService.INSTANCE.isPortOpen()) {
+    if (evt.getClickCount() == 2 && Main.SERIAL_PORT_SERVICE.isPortOpen()) {
       int index = list.locationToIndex(evt.getPoint());
       String c = (String) list.getModel().getElementAt(index);
       mainDialog.sendLine(c, true, false);
@@ -84,9 +84,9 @@ public class HistoryListClickListener extends MouseAdapter {
     }
 
     private void setEnabledStateForMenuItems() {
-      sendMenuItem.setEnabled(SerialPortService.INSTANCE.isPortOpen());
-      editBeforeSendMenuItem.setEnabled(SerialPortService.INSTANCE.isPortOpen());
-      sendWithoutLineSepMenuItem.setEnabled(SerialPortService.INSTANCE.isPortOpen());
+      sendMenuItem.setEnabled(Main.SERIAL_PORT_SERVICE.isPortOpen());
+      editBeforeSendMenuItem.setEnabled(Main.SERIAL_PORT_SERVICE.isPortOpen());
+      sendWithoutLineSepMenuItem.setEnabled(Main.SERIAL_PORT_SERVICE.isPortOpen());
     }
 
     private void initListeners() {

@@ -1,8 +1,8 @@
 package com.djordjem.serialmonitor.gui.maindlg;
 
+import com.djordjem.serialmonitor.Main;
 import com.djordjem.serialmonitor.gui.models.CustomComboModel;
 import com.djordjem.serialmonitor.serialport.SerialPortDTO;
-import com.djordjem.serialmonitor.serialport.SerialPortService;
 import com.djordjem.serialmonitor.serialport.SerialPortsListListener;
 import com.djordjem.serialmonitor.settings.SettingsService;
 
@@ -13,7 +13,7 @@ public class SerialPortComboModelList extends CustomComboModel<SerialPortDTO> im
   private boolean firstInitialisationDone = false;
 
   public SerialPortComboModelList() {
-    SerialPortService.INSTANCE.addPortsChangedListener(this);
+    Main.SERIAL_PORT_SERVICE.addPortsChangedListener(this);
   }
 
   @Override
@@ -26,7 +26,7 @@ public class SerialPortComboModelList extends CustomComboModel<SerialPortDTO> im
         setSelectedItem(sp);
       }
       String lastUsedPortName = SettingsService.SETTINGS.getSettings().getPortName();
-      if (!firstInitialisationDone && sp.getSystemPortName().equals(lastUsedPortName)) {
+      if (!firstInitialisationDone && sp.getName().equals(lastUsedPortName)) {
         setSelectedItem(sp);
       }
     }

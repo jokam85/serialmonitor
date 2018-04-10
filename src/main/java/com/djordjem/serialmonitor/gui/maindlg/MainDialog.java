@@ -1,12 +1,12 @@
 package com.djordjem.serialmonitor.gui.maindlg;
 
+import com.djordjem.serialmonitor.Main;
 import com.djordjem.serialmonitor.gui.commanddlg.CommandsEditDialog;
 import com.djordjem.serialmonitor.gui.models.CustomListModel;
 import com.djordjem.serialmonitor.gui.utils.FileUtils;
 import com.djordjem.serialmonitor.model.CommandGroup;
 import com.djordjem.serialmonitor.serialport.SerialPortDTO;
 import com.djordjem.serialmonitor.serialport.SerialPortDataListener;
-import com.djordjem.serialmonitor.serialport.SerialPortService;
 import com.djordjem.serialmonitor.settings.Settings;
 import com.djordjem.serialmonitor.settings.SettingsService;
 
@@ -76,7 +76,7 @@ public class MainDialog extends JDialog implements SerialPortDataListener {
     initListeners();
     applySettings();
 
-    SerialPortService.INSTANCE.addDataListener(this);
+    Main.SERIAL_PORT_SERVICE.addDataListener(this);
   }
 
   @Override
@@ -91,17 +91,17 @@ public class MainDialog extends JDialog implements SerialPortDataListener {
   private void openPort() {
     SerialPortDTO selectedItem = (SerialPortDTO) serialPortsCmb.getSelectedItem();
     if (selectedItem != null) {
-      String portName = selectedItem.getSystemPortName();
+      String portName = selectedItem.getName();
       Integer baudRate = (Integer) baudRateCmb.getSelectedItem();
       int baud = baudRate == null ? 9600 : baudRate;
-      SerialPortService.INSTANCE.openPort(portName, baud);
+      Main.SERIAL_PORT_SERVICE.openPort(portName, baud);
     }
   }
 
   private void onApplicationExit() {
     guiUpdater.stop();
-    SerialPortService.INSTANCE.closePort();
-    SerialPortService.INSTANCE.removeDataListener(this);
+    Main.SERIAL_PORT_SERVICE.closePort();
+    Main.SERIAL_PORT_SERVICE.removeDataListener(this);
     dispose();
     saveSettings();
   }
@@ -115,7 +115,7 @@ public class MainDialog extends JDialog implements SerialPortDataListener {
 
   private void initListeners() {
     openPortBtn.addActionListener(e -> openPort());
-    closeBtn.addActionListener(e -> SerialPortService.INSTANCE.closePort());
+    closeBtn.addActionListener(e -> Main.SERIAL_PORT_SERVICE.closePort());
     clearBtn.addActionListener(e -> clearTextField());
     saveLogButton.addActionListener(e -> saveLogAs());
     sendButton.addActionListener(e -> sendEnteredText());
@@ -125,7 +125,7 @@ public class MainDialog extends JDialog implements SerialPortDataListener {
       @Override
       public void keyPressed(KeyEvent e) {
         if (checkBoxSendAsType.isSelected()) {
-          SerialPortService.INSTANCE.sendChar(e.getKeyChar());
+          Main.SERIAL_PORT_SERVICE.sendChar(e.getKeyChar());
         } else {
           if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             sendEnteredText();
@@ -157,7 +157,7 @@ public class MainDialog extends JDialog implements SerialPortDataListener {
   }
 
   void sendLine(String line, boolean includeLineSeparator, boolean addToHistory) {
-    SerialPortService.INSTANCE.sendLine(line, includeLineSeparator ? getNewLine() : null);
+    Main.SERIAL_PORT_SERVICE.sendLine(line, includeLineSeparator ? getNewLine() : null);
     if (addToHistory) {
       historyListModel.addToTop(line, true, settings.getMaxHistoryEntries());
     }
@@ -241,7 +241,7 @@ public class MainDialog extends JDialog implements SerialPortDataListener {
     // Selected port
     final SerialPortDTO selectedPort = (SerialPortDTO) serialPortsCmb.getSelectedItem();
     if (selectedPort != null) {
-      settings.setPortName(selectedPort.getSystemPortName());
+      settings.setPortName(selectedPort.getName());
     }
 
     // Groups
@@ -267,7 +267,7 @@ public class MainDialog extends JDialog implements SerialPortDataListener {
     CommandGroup cg = (CommandGroup) commandGroupsComboBoxModel.getSelectedItem();
     commandButtonContainerPanel.removeAll();
     if (cg != null) {
-      boolean portOpen = SerialPortService.INSTANCE.isPortOpen();
+      boolean portOpen = Main.SERIAL_PORT_SERVICE.isPortOpen();
       cg.getCommands().forEach(cmd -> {
         JButton cmdBtn = new JButton(cmd.getCommand());
         cmdBtn.setEnabled(portOpen);

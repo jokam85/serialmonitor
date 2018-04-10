@@ -1,32 +1,34 @@
 package com.djordjem.serialmonitor.serialport;
 
-import com.fazecast.jSerialComm.SerialPort;
-
 import java.util.Objects;
 
 public class SerialPortDTO {
 
-  private SerialPort serialPort;
+  private String name;
 
-  public SerialPortDTO(SerialPort serialPort) {
-    this.serialPort = serialPort;
+  private String descriptiveName;
+
+  public SerialPortDTO(String name, String descriptiveName) {
+    this.name = name;
+    this.descriptiveName = descriptiveName;
   }
 
-  public SerialPort getSerialPort() {
-    return serialPort;
+  public SerialPortDTO(String name) {
+    this.name = name;
+    this.descriptiveName = name;
   }
 
-  public String getDescriptivePortName() {
-    return serialPort.getDescriptivePortName();
+  public String getName() {
+    return name;
   }
 
-  public String getSystemPortName() {
-    return serialPort.getSystemPortName();
+  public String getDescriptiveName() {
+    return descriptiveName;
   }
 
   @Override
   public String toString() {
-    return serialPort.getDescriptivePortName();
+    return name;
   }
 
   @Override
@@ -34,11 +36,11 @@ public class SerialPortDTO {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     SerialPortDTO that = (SerialPortDTO) o;
-    return Objects.equals(serialPort.getDescriptivePortName(), that.serialPort.getDescriptivePortName());
+    return Objects.equals(getName(), that.getName());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(serialPort.getDescriptivePortName());
+    return Objects.hash(descriptiveName);
   }
 }
