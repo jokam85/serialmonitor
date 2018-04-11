@@ -14,8 +14,7 @@ due to permissions required for accessing serial ports.**
 
 ## Releases
 
-## 1.4 TODO
-* Changed serial port lib to jssc
+## v1.5 TODO
 * display as text (TODO)
 * display as binary (TODO)
 * display as decimal numbers (TODO)
@@ -26,6 +25,9 @@ due to permissions required for accessing serial ports.**
 * command labels (TODO)
 * saving command groups to separate file, outside of settings file(TODO)
 * BUGFIX offscreen command buttons. break them into rows (TODO)
+
+## v1.4 [download](https://github.com/jokam85/serialmonitor/releases/download/v1.4/serialmonitor.jar)
+* Changed serial port lib to jssc
 * BUGFIX disable save as history button when history is empty
 
 ## v1.3 [download](https://github.com/jokam85/serialmonitor/releases/download/v1.3/serialmonitor.jar)
